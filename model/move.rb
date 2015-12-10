@@ -1,46 +1,37 @@
-require './board.rb'
-require './draw.rb'
-
-class Reversi
-  attr_reader :board
-
-  def initialize
-    @board = Board.instance
-    @turn = :white
+class Move
+  def initialize(x, y, turn)
+    @x = x
+    @y = y
+    @turn = turn.to_sym
     @end = false
-    @drawer = Drawer.new
   end
 
-  # 指し手
-  def move(x, y)
-    move = @board.find(x, y)
+  def execute
+    move = board.find(@x, @y)
 
-    # すでに石が置かれている
-    raise_if move.filled?
+    raise_if move.filled?, '既に石が置かれています'
 
     cells = reversible_cells(move)
 
-    # どこも裏返せないとエラー
-    raise_if cells.empty?
+    raise_if cells.empty?, 'どこも裏返せません'
 
     move.set(@turn)
     cells.each do |cell|
       cell.reverse
     end
-    @turn = opposite(@turn)
-  end
-
-  def draw
-    @drawer.draw
   end
 
   private
 
+  def board
+    Board.instance
+  end
+
   def reversible_cells(move)
     cells = []
 
-    next_cells = @board.surround(move).select do |index, cell|
-      cell.send((opposite(@turn).to_s + '?'))
+    next_cells = board.surround(move).select do |index, cell|
+      cell.send(opposite.to_s + '?')
     end
 
     return cells if next_cells.empty?
@@ -65,9 +56,10 @@ class Reversi
         break
       end
 
-      if next_cell.color != @turn
+      if next_cell.color.to_s != @turn
         #指し手と色が違う場合は配列に入れる
         cells << next_cell
+        next
       else
         break
       end
@@ -75,11 +67,14 @@ class Reversi
     cells
   end
 
-  def opposite(color)
-    color == :white ? :black : :white
+  def opposite
+    @turn == :white ? :black : :white
   end
 
   def raise_if(condition, message = nil)
-    raise message ? message : 'このセルには石を置けません' if condition
+    raise ReversiError.new(message ? message : 'このセルには石を置けません') if condition
   end
+end
+
+class ReversiError < StandardError
 end

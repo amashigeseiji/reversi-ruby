@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reversi</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      margin: 0 auto;
+    }
+    td.cell {
+      border: 1px #000 solid;
+      width: 25px;
+      height: 25px;
+      text-align: center;
+    }
+    body {
+      width: 80%;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body>
+  <p><%= @error if @error%></p>
+  <table>
+    <thead>
+      <tr>
+        <% (0..8).each do |i| %>
+          <th><%= i > 0 ? i.to_s : nil %></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% (1..8).each do |y| %>
+        <tr>
+          <th><%= y.to_s %></th>
+          <% @board.row(y).each_value do |cell| %>
+            <td class="cell"><%= cell.draw %></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <% if @dev %>
+  <ul>
+    <% request.inspect.split(', "').each do |val| %>
+      <li><%= val.to_s %></li>
+    <% end %>
+  </ul>
+  <% end %>
+
+</body>
+</html>

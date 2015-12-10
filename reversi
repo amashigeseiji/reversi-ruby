@@ -1,8 +1,0 @@
-#!/usr/bin/ruby
-
-require './reversi.rb'
-
-reversi = Reversi.new
-reversi.draw
-reversi.move(4,6)
-reversi.draw

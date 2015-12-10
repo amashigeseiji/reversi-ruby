@@ -1,0 +1,5 @@
+require './model/move.rb'
+require './model/board.rb'
+require './model/cell.rb'
+require './controller.rb'
+require './view.rb'

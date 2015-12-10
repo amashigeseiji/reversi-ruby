@@ -1,5 +1,4 @@
 require 'singleton'
-require './cell.rb'
 
 class Board
   include Singleton
@@ -41,6 +40,12 @@ class Board
   def line(x)
     @collection.select do |i, cell|
       cell.x == x
+    end
+  end
+
+  def row(y)
+    @collection.select do |i, cell|
+      cell.y == y
     end
   end
 

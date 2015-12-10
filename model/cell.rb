@@ -19,11 +19,11 @@ class Cell
   end
 
   def white?
-    @color == :white
+    @color.to_sym == :white
   end
 
   def black?
-    @color == :black
+    @color.to_sym == :black
   end
 
   def filled?
