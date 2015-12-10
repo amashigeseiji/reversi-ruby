@@ -1,5 +1,5 @@
 class Cell
-  attr_reader :color, :x, :y, :index
+  attr_reader :x, :y, :index
 
   def initialize(x, y)
     @x = x
@@ -10,7 +10,7 @@ class Cell
 
   def set(color)
     raise index + ': This cell is already filled.' if filled?
-    @color = color
+    @color = color.to_sym
   end
 
   def reverse
@@ -19,11 +19,11 @@ class Cell
   end
 
   def white?
-    @color.to_sym == :white
+    color == :white
   end
 
   def black?
-    @color.to_sym == :black
+    color == :black
   end
 
   def filled?
@@ -65,5 +65,9 @@ class Cell
       end
     end
     cell
+  end
+
+  def color
+    @color.to_sym if @color
   end
 end

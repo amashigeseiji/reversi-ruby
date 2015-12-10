@@ -50,13 +50,13 @@ class Move
     while true do
       #同じ方向の次のセルを取得
       next_cell = next_cell.send(vector)
-      if !next_cell || !next_cell.color
+      if !next_cell || !next_cell.filled?
         #次のセルが存在しないまたは値がない場合は値をリセット
         cells = []
         break
       end
 
-      if next_cell.color.to_s != @turn
+      if next_cell.color != @turn
         #指し手と色が違う場合は配列に入れる
         cells << next_cell
         next

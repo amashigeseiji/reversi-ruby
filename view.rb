@@ -11,7 +11,6 @@ class View
       return if @color.nil?
       white? ? '○' : '●'
     end
-    @dev = true
   end
 
   def html

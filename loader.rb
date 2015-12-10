@@ -1,3 +1,4 @@
+require './app.rb'
 require './model/move.rb'
 require './model/board.rb'
 require './model/cell.rb'
