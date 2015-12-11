@@ -46,11 +46,11 @@ class Move
   end
 
   def reversible_line(move, vector)
-    next_cell = move.send(vector)
+    next_cell = move.next_cell(vector)
     cells = [next_cell]
     while true do
       #同じ方向の次のセルを取得
-      next_cell = next_cell.send(vector)
+      next_cell = next_cell.next_cell(vector)
       if !next_cell || !next_cell.filled?
         #次のセルが存在しないまたは値がない場合は値をリセット
         cells = []

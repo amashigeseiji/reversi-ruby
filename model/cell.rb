@@ -32,47 +32,46 @@ class Cell
   end
 
   def vector_to(cell)
-    %w(right left below above right.below right.above left.below left.above).each do |vector|
-      if instance_eval(vector) == cell
+    %w(right left below above right-below right-above left-below left-above).each do |vector|
+      if next_cell(vector) == cell
         return vector
       end
     end
   end
 
-  def right
-    board.find(@x + 1, @y)
-  end
-
-  def left
-    board.find(@x - 1, @y)
-  end
-
-  def below
-    board.find(@x, @y + 1)
-  end
-
-  def above
-    board.find(@x, @y - 1)
+  def next_cell(vector)
+    index = next_cell_index(vector)
+    board.find index[0], index[1]
   end
 
   def board
     @board ||= Board.instance(@board_id)
   end
 
-  def method_missing(name, *args, &block)
-    methods = name.to_s.split('.')
-    cell = nil
-    methods.each do |method|
-      unless cell
-        cell = send(method) if %w(right left below above).include?(method)
-      else
-        cell = cell.send(method)
-      end
-    end
-    cell
-  end
-
   def color
     @color.to_sym if @color
+  end
+
+  private
+
+  def next_cell_index(vector)
+    case vector
+    when 'right'
+      [@x + 1, @y]
+    when 'left'
+      [@x - 1, @y]
+    when 'below'
+      [@x, @y + 1]
+    when 'above'
+      [@x, @y - 1]
+    when 'right-below'
+      [@x + 1, @y + 1]
+    when 'right-above'
+      [@x + 1, @y - 1]
+    when 'left-below'
+      [@x - 1, @y + 1]
+    when 'left-above'
+      [@x - 1, @y - 1]
+    end
   end
 end
