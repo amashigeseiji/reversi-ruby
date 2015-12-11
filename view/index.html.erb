@@ -3,26 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Reversi</title>
-  <style>
-    table {
-      border-collapse: collapse;
-      margin: 0 auto;
-    }
-    td.cell {
-      border: 1px #000 solid;
-      width: 25px;
-      height: 25px;
-      text-align: center;
-    }
-    td.cell:hover {
-      background-color: rgba(200, 255, 255, 0.5);
-      cursor: pointer;
-    }
-    body {
-      width: 80%;
-      margin: 0 auto;
-    }
-  </style>
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
   <script>
     function move(id) {
       var tmp = id.split('_')
@@ -36,36 +18,47 @@
 
 <body>
   <input type="hidden" id="turn" value="<%= @board.data.turn %>">
-  <p>ターン: <%= @board.data.turn %></p>
-  <table>
-    <thead>
-      <tr>
-        <% (0..8).each do |i| %>
-          <th><%= i > 0 ? i.to_s : nil %></th>
-        <% end %>
-      </tr>
-    </thead>
-    <tbody>
-      <% (1..8).each do |y| %>
+
+  <header class="container">
+    <h1><a href="/reset">オセロ</a></h1>
+    <div class="pull-right">ターン: <strong><%= @board.data.turn %></strong></div>
+  </header>
+
+  <div class="container center">
+    <table>
+      <thead>
         <tr>
-          <th><%= y.to_s %></th>
-          <% @board.row(y).each_value do |cell| %>
-            <td class="cell" id="cell_<%= cell.index %>" onclick="move(id)"><%= cell.draw %></td>
+          <% (0..8).each do |i| %>
+            <th><%= i > 0 ? i.to_s : nil %></th>
           <% end %>
         </tr>
+      </thead>
+      <tbody>
+        <% (1..8).each do |y| %>
+          <tr>
+            <th><%= y.to_s %></th>
+            <% @board.row(y).each_value do |cell| %>
+              <td class="cell" id="cell_<%= cell.index %>" onclick="move(id)"><%= cell.draw %></td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <footer class="container center">
+    <button class="btn btn-default" onclick="location.href='/reset'">リセット</button>
+
+    <p><%= @error if @error %></p>
+
+    <% if @request.dev? %>
+    <ul>
+      <% request.inspect.split(', "').each do |val| %>
+        <li><%= val.inspect %></li>
       <% end %>
-    </tbody>
-  </table>
-
-  <p><%= @error if @error %></p>
-
-  <% if @request.dev? %>
-  <ul>
-    <% request.inspect.split(', "').each do |val| %>
-      <li><%= val.inspect %></li>
+    </ul>
     <% end %>
-  </ul>
-  <% end %>
+  </footer>
 
 </body>
 </html>
