@@ -1,9 +1,9 @@
 class Move
-  def initialize(x, y, turn)
+  def initialize(x, y, turn, board_id)
     @x = x
     @y = y
     @turn = turn.to_sym
-    @end = false
+    @board_id = board_id
   end
 
   def execute
@@ -24,7 +24,7 @@ class Move
   private
 
   def board
-    Board.instance
+    Board.instance(@board_id)
   end
 
   def reversible_cells(move)

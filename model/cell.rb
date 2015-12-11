@@ -1,11 +1,12 @@
 class Cell
   attr_reader :x, :y, :index
 
-  def initialize(x, y)
+  def initialize(x, y, board_id)
     @x = x
     @y = y
     @index = Board.index(x, y)
     @color = nil
+    @board_id = board_id
   end
 
   def set(color)
@@ -39,19 +40,23 @@ class Cell
   end
 
   def right
-    Board.instance.find(@x + 1, @y)
+    board.find(@x + 1, @y)
   end
 
   def left
-    Board.instance.find(@x - 1, @y)
+    board.find(@x - 1, @y)
   end
 
   def below
-    Board.instance.find(@x, @y + 1)
+    board.find(@x, @y + 1)
   end
 
   def above
-    Board.instance.find(@x, @y - 1)
+    board.find(@x, @y - 1)
+  end
+
+  def board
+    @board ||= Board.instance(@board_id)
   end
 
   def method_missing(name, *args, &block)

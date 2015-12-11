@@ -22,7 +22,6 @@
 </head>
 
 <body>
-  <p><%= @error if @error%></p>
   <table>
     <thead>
       <tr>
@@ -43,10 +42,12 @@
     </tbody>
   </table>
 
-  <% if @dev %>
+  <p><%= @error if @error %></p>
+
+  <% if @request.dev? %>
   <ul>
     <% request.inspect.split(', "').each do |val| %>
-      <li><%= val.to_s %></li>
+      <li><%= val.inspect %></li>
     <% end %>
   </ul>
   <% end %>

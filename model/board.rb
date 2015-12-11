@@ -1,66 +1,74 @@
-require 'singleton'
-
 class Board
-  include Singleton
+  @@boards = {}
+  attr_reader :data, :id
 
-  def initialize
-    setup
+  def initialize(id = nil)
+    @data = Resource.find(id)
+    @id = @data.id
+    setup unless @data.exist?
+    @@boards[@id] = self
   end
 
   def setup
-    generate
+    create
     find(4, 4).set(:white)
     find(5, 4).set(:black)
     find(5, 5).set(:white)
     find(4, 5).set(:black)
+    self
   end
 
   def cells
-    @collection ||= generate
+    @data.cells
   end
 
   def find(x, y)
     index = Board.index(x, y)
-    @collection.key?(index) ? @collection[index] : nil
+    @data.cells.key?(index) ? @data.cells[index] : nil
   end
 
   def method_missing(name, *args, &block)
-    raise NoMethodError, "undefined method `#{name}` is called." unless @collection.respond_to?(name)
-    @collection.send(name, *args, &block)
+    raise NoMethodError, "undefined method `#{name}` is called." unless @data.cells.respond_to?(name)
+    @data.cells.send(name, *args, &block)
   end
 
   def surround(cell)
-    @collection.select { |key, val|
-      ((cell.x - 1)..(cell.x+1)).include?(val.x) &&\
+    @data.cells.select { |key, val|
+      ((cell.x - 1)..(cell.x + 1)).include?(val.x) &&\
         ((cell.y - 1)..(cell.y + 1)).include?(val.y) &&\
         val.index != Board.index(cell.x, cell.y)
     }
   end
 
   def line(x)
-    @collection.select do |i, cell|
-      cell.x == x
-    end
+    @data.cells.select { |i, cell| cell.x == x }
   end
 
   def row(y)
-    @collection.select do |i, cell|
-      cell.y == y
-    end
+    @data.cells.select { |i, cell| cell.y == y }
+  end
+
+  def save
+    @data.write
   end
 
   def self.index(x, y)
     x.to_s + '_' + y.to_s
   end
 
+  def self.instance(board_id)
+    @@boards[board_id] || Board.new(board_id)
+  end
+
   private
 
-  def generate
-    @collection = {}
+  def create
+    cells = {}
     (1..8).each do |x|
       (1..8).each do |y|
-        @collection[Board.index(x, y)] = Cell.new(x, y)
+        cells[Board.index(x, y)] = Cell.new(x, y, @id)
       end
     end
+    @data.cells = cells
   end
 end
