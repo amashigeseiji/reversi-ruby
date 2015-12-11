@@ -33,14 +33,6 @@ class Board
     @data.cells.send(name, *args, &block)
   end
 
-  def surround(cell)
-    @data.cells.select { |key, val|
-      ((cell.x - 1)..(cell.x + 1)).include?(val.x) &&\
-        ((cell.y - 1)..(cell.y + 1)).include?(val.y) &&\
-        val.index != Board.index(cell.x, cell.y)
-    }
-  end
-
   def line(x)
     @data.cells.select { |i, cell| cell.x == x }
   end
