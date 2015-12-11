@@ -14,14 +14,29 @@
       height: 25px;
       text-align: center;
     }
+    td.cell:hover {
+      background-color: rgba(200, 255, 255, 0.5);
+      cursor: pointer;
+    }
     body {
       width: 80%;
       margin: 0 auto;
     }
   </style>
+  <script>
+    function move(id) {
+      var tmp = id.split('_')
+      var x = tmp[1]
+      var y = tmp[2]
+      var turn = document.getElementById('turn').value
+      location.href = '/move?x=' + x + '&y=' + y + '&color=' + turn
+    }
+  </script>
 </head>
 
 <body>
+  <input type="hidden" id="turn" value="<%= @board.data.turn %>">
+  <p>ターン: <%= @board.data.turn %></p>
   <table>
     <thead>
       <tr>
@@ -35,7 +50,7 @@
         <tr>
           <th><%= y.to_s %></th>
           <% @board.row(y).each_value do |cell| %>
-            <td class="cell"><%= cell.draw %></td>
+            <td class="cell" id="cell_<%= cell.index %>" onclick="move(id)"><%= cell.draw %></td>
           <% end %>
         </tr>
       <% end %>

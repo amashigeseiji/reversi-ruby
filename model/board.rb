@@ -15,6 +15,7 @@ class Board
     find(5, 4).set(:black)
     find(5, 5).set(:white)
     find(4, 5).set(:black)
+    @data[:turn] = :white
     self
   end
 
