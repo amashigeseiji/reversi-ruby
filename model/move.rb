@@ -19,6 +19,7 @@ class Move
     cells.each do |cell|
       cell.reverse
     end
+    board.data.turn = opposite
   end
 
   private
