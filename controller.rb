@@ -1,11 +1,19 @@
 class Controller
-  Rack::Request.send :define_method, :action do
-    path_info.split('/')[1]
-  end
-
   def initialize(env)
     @request = Rack::Request.new(env)
-    @board = Board.instance
+    if session['board_id']
+      @board = Board.instance(session['board_id'])
+      if @board.id != session['board_id']
+        session['board_id'] = @board.id
+      end
+    else
+      @board = Board.new
+      session['board_id'] = @board.id
+    end
+  end
+
+  def session
+    @request.session
   end
 
   def response
@@ -38,12 +46,13 @@ class Controller
   end
 
   def move
-    move = Move.new(@request[:x], @request[:y], @request[:color])
+    move = Move.new(@request[:x], @request[:y], @request[:color], @board.id)
     move.execute
+    @board.save
   end
 
   def reset
-    @board.setup
+    @board.setup.save
   end
 end
 
