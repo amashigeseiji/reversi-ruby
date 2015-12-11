@@ -1,21 +1,16 @@
 class Move
-  def initialize(x, y, turn, board_id)
-    @x = x
-    @y = y
+  def initialize(cell, turn)
+    raise_if cell.filled?, '既に石が置かれています'
+    @cell = cell
     @turn = turn.to_sym
-    @board_id = board_id
   end
 
   def execute
-    move = board.find(@x, @y)
-
-    raise_if move.filled?, '既に石が置かれています'
-
-    cells = reversible_cells(move)
+    cells = reversible_cells
 
     raise_if cells.empty?, 'どこも裏返せません'
 
-    move.set(@turn)
+    @cell.set(@turn)
     cells.each do |cell|
       cell.reverse
     end
@@ -25,32 +20,42 @@ class Move
   private
 
   def board
-    Board.instance(@board_id)
+    @cell.board
   end
 
-  def reversible_cells(move)
+  def reversible_cells
     cells = []
-
-    next_cells = board.surround(move).select do |index, cell|
-      cell.send(opposite.to_s + '?')
-    end
 
     return cells if next_cells.empty?
 
     next_cells.each_value do |next_cell|
-      reversible_line(move, move.vector_to(next_cell)).each do |cell|
+      reversible_line(@cell, @cell.vector_to(next_cell)).each do |cell|
         cells << cell
       end
     end
     cells
   end
 
+  def next_cells
+    @next_cells ||= surround.select do |index, cell|
+      cell.send(opposite.to_s + '?')
+    end
+  end
+
+  def surround
+    board.cells.select { |key, val|
+      ((@cell.x - 1)..(@cell.x + 1)).include?(val.x) &&\
+        ((@cell.y - 1)..(@cell.y + 1)).include?(val.y) &&\
+        val.index != Board.index(@cell.x, @cell.y)
+    }
+  end
+
   def reversible_line(move, vector)
-    next_cell = move.send(vector)
+    next_cell = move.next_cell(vector)
     cells = [next_cell]
     while true do
       #同じ方向の次のセルを取得
-      next_cell = next_cell.send(vector)
+      next_cell = next_cell.next_cell(vector)
       if !next_cell || !next_cell.filled?
         #次のセルが存在しないまたは値がない場合は値をリセット
         cells = []

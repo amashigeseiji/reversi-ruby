@@ -8,8 +8,7 @@ class View
     @board = board
     @error = error
     Cell.send :define_method, :draw do
-      return if @color.nil?
-      white? ? '○' : '●'
+      '<span class="disc ' + @color.send(:to_s) + '"></span>'
     end
   end
 
