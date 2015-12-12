@@ -12,13 +12,6 @@ class App
   end
 
   def call(env)
-    env['PATH_INFO'].match(/(.*)\.css/) do
-      return [
-          200,
-          {'Content-Type' => 'text/css'},
-          [open("./view/css#{$1}.css", &:read)]
-        ]
-    end
     controller = Controller.new(env)
     controller.response.finish
   end
