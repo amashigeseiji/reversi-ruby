@@ -1,53 +1,60 @@
 class Move
-  def initialize(cell, turn)
-    raise_if cell.filled?, '既に石が置かれています'
-    @cell = cell
+  def initialize(board_id, turn)
+    @board_id = board_id
     @turn = turn.to_sym
+    @moves = {}
   end
 
-  def execute
-    cells = reversible_cells
+  def moves
+    # todo 手数がない場合について
+    return @moves unless @moves.empty?
+    empties.each do |index, cell|
+      cells = reversible_cells(cell)
+      @moves[cell.index] = cells unless cells.empty?
+    end
+    @moves
+  end
 
-    raise_if cells.empty?, 'どこも裏返せません'
-
-    @cell.set(@turn)
-    cells.each do |cell|
+  def execute(move)
+    raise_if !moves.has_key?(move.index)
+    move.set(@turn)
+    moves[move.index].each do |cell|
       cell.reverse
     end
-    board.data.turn = opposite
+    @empties.delete(move.index)
   end
 
   private
 
   def board
-    @cell.board
+    Board.instance(@board_id)
   end
 
-  def reversible_cells
+  def empties
+    @empties ||= board.cells.select {|key, cell| !cell.filled? }
+  end
+
+  def reversible_cells(move)
     cells = []
 
+    next_cells = next_cells move
     return cells if next_cells.empty?
 
-    next_cells.each_value do |next_cell|
-      reversible_line(@cell, @cell.vector_to(next_cell)).each do |cell|
+    next_cells.each do |next_cell|
+      reversible_line(move, move.vector_to(next_cell)).each do |cell|
         cells << cell
       end
     end
     cells
   end
 
-  def next_cells
-    @next_cells ||= surround.select do |index, cell|
-      cell.send(opposite.to_s + '?')
+  def next_cells(move)
+    cells = []
+    Cell.vectors.each do |vector|
+      next_cell = move.next_cell(vector)
+      cells << next_cell if next_cell && next_cell.opposite_to?(@turn)
     end
-  end
-
-  def surround
-    board.cells.select { |key, val|
-      ((@cell.x - 1)..(@cell.x + 1)).include?(val.x) &&\
-        ((@cell.y - 1)..(@cell.y + 1)).include?(val.y) &&\
-        val.index != Board.index(@cell.x, @cell.y)
-    }
+    cells
   end
 
   def reversible_line(move, vector)
@@ -62,10 +69,9 @@ class Move
         break
       end
 
-      if next_cell.color != @turn
+      if next_cell.opposite_to?(@turn)
         #指し手と色が違う場合は配列に入れる
         cells << next_cell
-        next
       else
         break
       end
