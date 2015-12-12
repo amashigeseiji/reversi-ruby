@@ -46,8 +46,8 @@ class Controller
   end
 
   def move
-    move = Move.new(@board.find(@request[:x], @request[:y]), @request[:color])
-    move.execute
+    move = Move.new(@board, @request[:color])
+    move.execute(@board.find(@request[:x], @request[:y]))
     @board.save
   end
 

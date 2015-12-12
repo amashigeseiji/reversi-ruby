@@ -1,16 +1,21 @@
 class Move
-  def initialize(cell, turn)
-    raise_if cell.filled?, '既に石が置かれています'
-    @cell = cell
+  attr_reader :board
+  def initialize(board, turn)
+    @board = board
     @turn = turn.to_sym
   end
 
-  def execute
+  def movable
+  end
+
+  def execute(move)
+    @cell = move
+    raise_if move.filled?, '既に石が置かれています'
     cells = reversible_cells
 
     raise_if cells.empty?, 'どこも裏返せません'
 
-    @cell.set(@turn)
+    move.set(@turn)
     cells.each do |cell|
       cell.reverse
     end
@@ -20,7 +25,7 @@ class Move
   private
 
   def board
-    @cell.board
+    @board
   end
 
   def reversible_cells
