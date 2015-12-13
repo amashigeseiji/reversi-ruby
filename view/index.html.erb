@@ -10,7 +10,7 @@
       var tmp = id.split('_')
       var x = tmp[1]
       var y = tmp[2]
-      var turn = document.getElementById('turn').value
+      turn = document.getElementById('turn').value
       location.href = '/move?x=' + x + '&y=' + y + '&color=' + turn
     }
   </script>
@@ -25,18 +25,11 @@
   </header>
 
   <div class="container center">
+
     <table>
-      <thead>
-        <tr>
-          <% (0..8).each do |i| %>
-            <th><%= i > 0 ? i.to_s : nil %></th>
-          <% end %>
-        </tr>
-      </thead>
       <tbody>
         <% (1..8).each do |y| %>
           <tr>
-            <th><%= y.to_s %></th>
             <% @board.row(y).each_value do |cell| %>
               <td class="cell" id="cell_<%= cell.index %>" onclick="move(id)"><%= cell.draw %></td>
             <% end %>
@@ -48,6 +41,12 @@
 
   <footer class="container center">
     <button class="btn btn-default" onclick="location.href='/reset'">リセット</button>
+
+    <ul>
+      <% @moves.each do |index, move| %>
+        <li><%= index %></li>
+      <% end %>
+    </ul>
 
     <p><%= @error if @error %></p>
 

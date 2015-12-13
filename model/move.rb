@@ -1,46 +1,57 @@
 class Move
-  attr_reader :board
-  def initialize(board, turn)
-    @board = board
+  def initialize(board_id, turn)
+    @board_id = board_id
     @turn = turn.to_sym
+    @moves = {}
   end
 
-  def movable
+  def moves
+    # todo 手数がない場合について
+    return @moves unless @moves.empty?
+    empties.each do |index, cell|
+      cells = reversible_cells(cell)
+      @moves[cell.index] = cells unless cells.empty?
+    end
+    @moves
   end
 
   def execute(move)
-    @cell = move
-    raise_if move.filled?, '既に石が置かれています'
-    cells = reversible_cells
-
-    raise_if cells.empty?, 'どこも裏返せません'
-
+    raise_if !moves.has_key?(move.index)
     move.set(@turn)
-    cells.each do |cell|
+    moves[move.index].each do |cell|
       cell.reverse
     end
-    board.data.turn = opposite
+    @empties.delete(move.index)
   end
 
   private
 
-  def reversible_cells
+  def board
+    Board.instance(@board_id)
+  end
+
+  def empties
+    @empties ||= board.cells.select {|key, cell| !cell.filled? }
+  end
+
+  def reversible_cells(move)
     cells = []
 
+    next_cells = next_cells move
     return cells if next_cells.empty?
 
     next_cells.each do |next_cell|
-      reversible_line(@cell, @cell.vector_to(next_cell)).each do |cell|
+      reversible_line(move, move.vector_to(next_cell)).each do |cell|
         cells << cell
       end
     end
     cells
   end
 
-  def next_cells
+  def next_cells(move)
     cells = []
     Cell.vectors.each do |vector|
-      next_cell = @cell.next_cell(vector)
+      next_cell = move.next_cell(vector)
       cells << next_cell if next_cell && next_cell.opposite_to?(@turn)
     end
     cells
