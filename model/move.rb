@@ -24,16 +24,12 @@ class Move
 
   private
 
-  def board
-    @board
-  end
-
   def reversible_cells
     cells = []
 
     return cells if next_cells.empty?
 
-    next_cells.each_value do |next_cell|
+    next_cells.each do |next_cell|
       reversible_line(@cell, @cell.vector_to(next_cell)).each do |cell|
         cells << cell
       end
@@ -42,17 +38,12 @@ class Move
   end
 
   def next_cells
-    @next_cells ||= surround.select do |index, cell|
-      cell.send(opposite.to_s + '?')
+    cells = []
+    Cell.vectors.each do |vector|
+      next_cell = @cell.next_cell(vector)
+      cells << next_cell if next_cell && next_cell.opposite_to?(@turn)
     end
-  end
-
-  def surround
-    board.cells.select { |key, val|
-      ((@cell.x - 1)..(@cell.x + 1)).include?(val.x) &&\
-        ((@cell.y - 1)..(@cell.y + 1)).include?(val.y) &&\
-        val.index != Board.index(@cell.x, @cell.y)
-    }
+    cells
   end
 
   def reversible_line(move, vector)
@@ -67,10 +58,9 @@ class Move
         break
       end
 
-      if next_cell.color != @turn
+      if next_cell.opposite_to?(@turn)
         #指し手と色が違う場合は配列に入れる
         cells << next_cell
-        next
       else
         break
       end
