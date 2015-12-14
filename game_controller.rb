@@ -4,7 +4,6 @@ class GameController
     set_board
     @turn = @board.data.turn ? @board.data.turn : :white
     @move = Move.new(@board.id, @turn)
-    @error = nil
   end
 
   def index
@@ -12,7 +11,9 @@ class GameController
 
   def move
     cell = @board.find(@request[:x], @request[:y])
-    if cell && !cell.filled? && @move.execute(cell)
+    raise BadRequestError.new('指定されたセルが存在しません') unless cell
+    raise BadRequestError.new('すでに石が置かれています') if cell.filled?
+    if @move.execute(cell)
       next_turn
       @board.save
     end
@@ -24,7 +25,7 @@ class GameController
   end
 
   def pass
-    raise '指すことができるのでパスできません' unless @move.moves.empty?
+    raise BadRequestError.new('指すことができるのでパスできません') unless @move.moves.empty?
     next_turn
     @board.save
   end
