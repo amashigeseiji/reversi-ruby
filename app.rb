@@ -13,7 +13,7 @@ class App
   end
 
   def call(env)
-    controller = Controller.new(env)
-    controller.response.finish
+    handler = RequestHandler.new(env)
+    handler.response.finish
   end
 end

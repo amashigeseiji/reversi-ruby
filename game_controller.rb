@@ -29,10 +29,6 @@ class GameController
     @board.save
   end
 
-  def render
-    View.new(self).html
-  end
-
   private
 
   def set_board
