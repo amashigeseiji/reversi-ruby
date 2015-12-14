@@ -31,8 +31,12 @@ class Cell
     !@color.nil?
   end
 
+  def opposite_to?(color)
+    filled? && @color != color
+  end
+
   def vector_to(cell)
-    %w(right left below above right-below right-above left-below left-above).each do |vector|
+    Cell.vectors.each do |vector|
       if next_cell(vector) == cell
         return vector
       end
@@ -45,11 +49,15 @@ class Cell
   end
 
   def board
-    @board ||= Board.instance(@board_id)
+    Board.instance(@board_id)
   end
 
   def color
     @color.to_sym if @color
+  end
+
+  def self.vectors
+    %w(right left below above right-below right-above left-below left-above)
   end
 
   private
