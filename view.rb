@@ -1,13 +1,10 @@
 require 'erb'
 
 class View
-  attr_reader :request
-
   def initialize(request, controller)
-    @request = request
-    @board = controller.instance_variable_get(:@board)
-    @move = controller.instance_variable_get(:@move)
-    @error = controller.instance_variable_get(:@error)
+    controller.instance_variables.each do |variable|
+      eval "#{variable.to_s} = controller.instance_variable_get(variable)"
+    end
   end
 
   def html

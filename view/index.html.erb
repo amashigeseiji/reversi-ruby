@@ -55,7 +55,7 @@
 
     <% if @request.dev? %>
     <ul>
-      <% request.inspect.split(', "').each do |val| %>
+      <% @request.inspect.split(', "').each do |val| %>
         <li><%= val.inspect %></li>
       <% end %>
     </ul>
