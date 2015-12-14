@@ -21,7 +21,6 @@ class GameController
   def reset
     @board.setup.save
     @move = Move.new(@board.id, @turn)
-    send :index
   end
 
   def pass
@@ -31,7 +30,7 @@ class GameController
   end
 
   def render
-    View.new(@request, self).html
+    View.new(self).html
   end
 
   private

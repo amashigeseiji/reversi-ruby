@@ -1,7 +1,7 @@
 require 'erb'
 
 class View
-  def initialize(request, controller)
+  def initialize(controller)
     controller.instance_variables.each do |variable|
       eval "#{variable.to_s} = controller.instance_variable_get(variable)"
     end
