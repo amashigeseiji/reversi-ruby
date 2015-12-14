@@ -1,4 +1,4 @@
-require './loader.rb'
+require './lib/loader.rb'
 
 use Rack::Reloader, 0
 use Rack::Session::Cookie

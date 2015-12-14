@@ -86,6 +86,3 @@ class Move
     raise ReversiError.new(message ? message : 'このセルには石を置けません') if condition
   end
 end
-
-class ReversiError < StandardError
-end

@@ -1,8 +1,0 @@
-require './app.rb'
-require './model/move.rb'
-require './model/board.rb'
-require './model/cell.rb'
-require './model/resource.rb'
-require './request_handler.rb'
-require './game_controller.rb'
-require './view.rb'
