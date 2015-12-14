@@ -32,7 +32,7 @@ class GameController
   end
 
   def moves
-    Move.new(@board.id, @turn).moves
+    @move.moves
   end
 
   private
@@ -56,5 +56,6 @@ class GameController
   def next_turn
     @turn = @turn == :white ? :black : :white
     @board.data.turn = @board.data.turn == :white ? :black : :white
+    @move = Move.new(@board.id, @turn)
   end
 end
