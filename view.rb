@@ -5,12 +5,9 @@ class View
 
   def initialize(request, controller)
     @request = request
-    @board = controller.board
-    @moves = controller.moves
-    @error = controller.error
-    Cell.send :define_method, :draw do
-      '<span class="disc ' + @color.send(:to_s) + '"></span>'
-    end
+    @board = controller.instance_variable_get(:@board)
+    @move = controller.instance_variable_get(:@move)
+    @error = controller.instance_variable_get(:@error)
   end
 
   def html
