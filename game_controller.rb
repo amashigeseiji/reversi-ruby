@@ -27,12 +27,13 @@ class GameController
     send :index
   end
 
-  def render
-    View.new(@request, self).html
+  def pass
+    next_turn
+    @board.save
   end
 
-  def moves
-    @move.moves
+  def render
+    View.new(@request, self).html
   end
 
   private

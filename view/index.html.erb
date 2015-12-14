@@ -5,20 +5,13 @@
   <title>Reversi</title>
   <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/style.css">
-  <script>
-    function move(id) {
-      var tmp = id.split('_')
-      var x = tmp[1]
-      var y = tmp[2]
-      location.href = '/move?x=' + x + '&y=' + y
-    }
-  </script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src='/js/script.js'></script>
 </head>
 
 <body>
   <header class="container">
     <h1><a href="/reset">オセロ</a></h1>
-    <div class="pull-right">ターン: <strong><%= @board.data.turn %></strong></div>
   </header>
 
   <div class="container center">
@@ -28,7 +21,9 @@
         <% (1..8).each do |y| %>
           <tr>
             <% @board.row(y).each_value do |cell| %>
-              <td class="cell" id="cell_<%= cell.index %>" onclick="move(id)"><%= cell.draw %></td>
+              <td class="cell<%= ' movable' if @move.moves.has_key? cell.index %>" id="cell_<%= cell.index %>" data-index="<%= cell.index %>">
+                <span class="disc <%= cell.color.send(:to_s) %>"></span>
+              </td>
             <% end %>
           </tr>
         <% end %>
@@ -36,17 +31,25 @@
     </table>
   </div>
 
-  <footer class="container center">
+  <footer class="container">
 
     <div>
-      <% @moves.each do |index, move| %>
-        <button class="btn btn-default move" id="move_<%= index %>" onclick="move(id)"><%= index %></button>
-      <% end %>
+      <div class="clearfix">
+        <p class="pull-left">ターン: <strong><%= @board.data.turn %></strong></p>
+        <div class="pull-right">
+          <button class="btn btn-danger btn-alert" onclick="location.href='/reset'">リセット</button>
+        </div>
+      </div>
+      <div class="center">
+        <% if @move.moves.empty? %>
+          <button class="btn btn-default pass">パス</button>
+        <% end %>
+        <% @move.moves.each do |index, move| %>
+          <button class="btn btn-default move" data-index="<%= index %>"><%= index %></button>
+        <% end %>
+      </div>
     </div>
 
-    <div>
-      <button class="btn btn-default btn-alert" onclick="location.href='/reset'">リセット</button>
-    </div>
 
     <p><%= @error if @error %></p>
 

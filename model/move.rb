@@ -2,12 +2,11 @@ class Move
   def initialize(board_id, turn)
     @board_id = board_id
     @turn = turn.to_sym
-    @moves = {}
   end
 
   def moves
-    # todo 手数がない場合について
-    return @moves unless @moves.empty?
+    return @moves if @moves
+    @moves = {}
     empties.each do |index, cell|
       cells = reversible_cells(cell)
       @moves[cell.index] = cells unless cells.empty?
