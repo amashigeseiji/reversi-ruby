@@ -44,3 +44,7 @@ header {
 footer {
   margin-top: 50px;
 }
+
+.container {
+  width: 500px;
+}
