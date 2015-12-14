@@ -1,20 +1,16 @@
 class GameController
-  attr_reader :board
-  attr_accessor :error
-
   def initialize(request)
     @request = request
     set_board
     @turn = @board.data.turn ? @board.data.turn : :white
+    @move = Move.new(@board.id, @turn)
     @error = nil
   end
 
   def index
-    @move = Move.new(@board.id, @turn)
   end
 
   def move
-    @move = Move.new(@board.id, @turn)
     cell = @board.find(@request[:x], @request[:y])
     if cell && !cell.filled? && @move.execute(cell)
       next_turn
@@ -24,10 +20,12 @@ class GameController
 
   def reset
     @board.setup.save
+    @move = Move.new(@board.id, @turn)
     send :index
   end
 
   def pass
+    raise '指すことができるのでパスできません' unless @move.moves.empty?
     next_turn
     @board.save
   end
