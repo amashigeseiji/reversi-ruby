@@ -18,9 +18,9 @@ class Controller
   def execute
     @status = 200
     begin
-      @controller.send @request.action ? @request.action : 'index'
-    rescue ReversiError => e
-      @controller.error = e.message
+      @controller.send @request.action
+    rescue StandardError => e
+      @controller.instance_variable_set(:@error, e.message)
     end
   end
 end

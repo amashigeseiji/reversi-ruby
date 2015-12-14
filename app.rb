@@ -1,6 +1,7 @@
 class App
   Rack::Request.send :define_method, :action do
-    dev? ? path_split[2] : path_split[1]
+    action = dev? ? path_split[2] : path_split[1]
+    action.nil? ? 'index' : action
   end
 
   Rack::Request.send :define_method, :path_split do
