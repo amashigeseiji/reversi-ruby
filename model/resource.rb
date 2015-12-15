@@ -22,19 +22,15 @@ class Resource
   end
 
   def method_missing(name, *args)
+    if name =~ /(.*)=$/
+      set($1, args[0])
+      return
+    end
     @data.key?(name.to_sym) ? @data[name.to_sym] : nil
   end
 
   def set(name, val)
     @data[name.to_sym] = val
-  end
-
-  def turn=(val)
-    set(:turn, val)
-  end
-
-  def cells=(val)
-    set(:cells, val)
   end
 
   def [](name)
