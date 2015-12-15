@@ -1,36 +1,46 @@
 $(document).ready(function(){
-    var movable = $('.movable');
-    var move = $('.move');
-    var get_index = function(selector) {
-        console.log($(selector).data('index'))
-        var tmp = $(selector).data('index').split('_');
-        return {x: tmp[0], y: tmp[1]};
-    };
-    var move_url = function(index) {
-        return '/move?x=' + index.x + '&y=' + index.y
-    };
-    var get_cell = function(index) {
-        return $('#cell_' + index.x + '_' + index.y);
-    };
 
-    $.each([movable, move], function() {
-        this.on('click', function() {
-            location.href = move_url(get_index(this));
-        });
-    });
+    function Move() { this.init(); }
 
-    move.hover(
-        function() {
-            get_cell(get_index(this))
-                .css('background-color', 'rgba(200, 255, 255, 0.9)');
-        },
-        function() {
-            get_cell(get_index(this))
-                .css('background-color', '');
+    Move.prototype.init = function() {
+        this.template = {
+            movable: $('.movable'),
+            move:    $('.move'),
+            pass:    $('button.pass')
         }
-    );
 
-    $('button.pass').on('click', function() {
+        this.bind(this.template.movable, 'click', 'execute')
+        this.bind(this.template.move,    'click', 'execute')
+        this.bind(this.template.movable, 'mouseenter mouseleave', 'toggle')
+        this.bind(this.template.move,    'mouseenter mouseleave', 'toggle')
+        this.bind(this.template.pass,    'click', 'pass')
+    }
+
+    Move.prototype.bind = function(dom, event_name, callback) {
+        dom.on(event_name, {self: this}, function(event) {
+           //ここでの this はdomセレクター
+           event.data.self[callback](this);
+        })
+    }
+
+    Move.prototype.execute = function(selector) {
+        var index = $(selector).data('index').split('_')
+        location.href = '/move?x=' + index[0] + '&y=' + index[1];
+    }
+
+    Move.prototype.pass = function() {
         location.href = '/pass';
-    })
+    }
+
+    Move.prototype.toggle = function(selector) {
+        var cell = $('.cell_' + $(selector).data('index'))
+        cell.toggleClass('hover')
+
+        var reversibles = JSON.parse(cell.find('span.reversible_cell_json').text())
+        $.each (reversibles, function(key, value) {
+            $('#cell_' + value).find('span').toggleClass('reversible')
+        })
+    }
+
+    new Move
 });

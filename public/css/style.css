@@ -33,9 +33,15 @@ td.cell > .disc.white {
 td.cell > .disc.black {
   background: #000;
 }
-td.cell:hover {
+td.cell > .disc.reversible {
   background-color: rgba(200, 255, 255, 0.9);
+}
+td.cell:hover, td.cell.movable.hover {
+  background-color: rgba(100, 150, 100, 0.9);
   cursor: pointer;
+}
+td.cell.movable:hover, td.cell.movable.hover {
+  background-color: rgba(200, 250, 200, 0.9);
 }
 
 header {
