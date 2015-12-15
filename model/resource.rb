@@ -14,7 +14,7 @@ class Resource
   end
 
   def write
-    File.open(filename, 'w').write(Marshal.dump(@data))
+    File.open(filename, 'w') { |f| f.write(Marshal.dump(@data)) }
   end
 
   def delete
