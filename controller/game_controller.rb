@@ -2,7 +2,7 @@ class GameController
   def initialize(request)
     @request = request
     set_board
-    @turn = @board.data.turn ? @board.data.turn : :white
+    @turn = @board.data.turn ? @board.data.turn : :black
     @move = Move.new(@board.id, @turn)
   end
 
@@ -15,19 +15,19 @@ class GameController
     raise BadRequestError.new('すでに石が置かれています') if cell.filled?
     if @move.execute(cell)
       next_turn
-      @board.save
     end
   end
 
   def reset
-    @board.setup.save
+    @board.setup
+    set_turn(:black)
+    @board.save
     @move = Move.new(@board.id, @turn)
   end
 
   def pass
     raise BadRequestError.new('指すことができるのでパスできません') unless @move.moves.empty?
     next_turn
-    @board.save
   end
 
   private
@@ -44,13 +44,18 @@ class GameController
     end
   end
 
+  def set_turn(turn)
+    @turn = turn
+    @board.data.turn = turn
+  end
+
   def session
     @request.session
   end
 
   def next_turn
-    @turn = @turn == :white ? :black : :white
-    @board.data.turn = @board.data.turn == :white ? :black : :white
+    set_turn(@turn == :white ? :black : :white)
+    @board.save
     @move = Move.new(@board.id, @turn)
   end
 end
