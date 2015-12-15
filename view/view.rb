@@ -1,4 +1,5 @@
 require 'erb'
+require 'json'
 
 class View
   def initialize(controller)

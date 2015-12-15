@@ -11,7 +11,7 @@
 
 <body>
   <header class="container">
-    <h1><a href="/reset">オセロ</a></h1>
+    <h1>Othello</h1>
   </header>
 
   <div class="container center">
@@ -21,7 +21,7 @@
         <% (1..8).each do |y| %>
           <tr>
             <% @board.row(y).each_value do |cell| %>
-              <td class="cell<%= ' movable' if @move.moves.has_key? cell.index %>" id="cell_<%= cell.index %>" data-index="<%= cell.index %>">
+              <td class="cell<%= ' movable' if @move.moves.has_key? cell.index %> cell_<%= cell.index %>" id="cell_<%= cell.index %>" data-index="<%= cell.index %>">
                 <span class="disc <%= cell.color.send(:to_s) %>"></span>
               </td>
             <% end %>
@@ -44,8 +44,13 @@
         <% if @move.moves.empty? %>
           <button class="btn btn-default pass">パス</button>
         <% end %>
-        <% @move.moves.each do |index, move| %>
-          <button class="btn btn-default move" data-index="<%= index %>"><%= index %></button>
+        <% @move.moves.each do |index, reversibles| %>
+          <button class="btn btn-default move cell_<%= index %>" data-index="<%= index %>">
+            <%= index %>
+            <span class="hidden reversible_cell_json">
+              <%= reversibles.map {|cell| cell.index }.to_json %>
+            </span>
+          </button>
         <% end %>
       </div>
     </div>
