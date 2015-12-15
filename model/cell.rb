@@ -45,7 +45,7 @@ class Cell
 
   def next_cell(vector)
     index = next_cell_index(vector)
-    board.find index[0], index[1]
+    board.cell index[0], index[1]
   end
 
   def board

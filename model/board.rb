@@ -1,34 +1,27 @@
 class Board
   @@boards = {}
-  attr_reader :data, :id
+  attr_reader :id
 
   def initialize(id = nil)
     @data = Resource.find(id)
     @id = @data.id
     setup unless @data.exist?
+    add_methods
     @@boards[@id] = self
   end
 
   def setup
     create
-    find(4, 4).set(:white)
-    find(5, 4).set(:black)
-    find(5, 5).set(:white)
-    find(4, 5).set(:black)
+    cell(4, 4).set(:white)
+    cell(5, 4).set(:black)
+    cell(5, 5).set(:white)
+    cell(4, 5).set(:black)
+    @data[:turn] = :black
   end
 
-  def cells
-    @data.cells
-  end
-
-  def find(x, y)
+  def cell(x, y)
     index = Board.index(x, y)
     @data.cells.key?(index) ? @data.cells[index] : nil
-  end
-
-  def method_missing(name, *args, &block)
-    raise NoMethodError, "undefined method `#{name}` is called." unless @data.cells.respond_to?(name)
-    @data.cells.send(name, *args, &block)
   end
 
   def line(x)
@@ -48,7 +41,7 @@ class Board
   end
 
   def self.instance(board_id)
-    @@boards[board_id] || Board.new(board_id)
+    @@boards[board_id] ||= Board.new(board_id)
   end
 
   private
@@ -61,5 +54,20 @@ class Board
       end
     end
     @data.cells = cells
+  end
+
+  def add_methods
+    #cells, turn
+    @data.data.keys.each do |key|
+      self.class.class_eval do
+        define_method "#{key}" do
+          @data[key]
+        end
+
+        define_method "#{key}=" do |value|
+          @data[key] = value
+        end
+      end
+    end
   end
 end

@@ -1,7 +1,7 @@
 require 'SecureRandom'
 
 class Resource
-  attr_reader :id
+  attr_reader :id, :data
 
   def initialize(id = nil)
     @id = id || Resource.random
