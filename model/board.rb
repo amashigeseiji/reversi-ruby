@@ -33,8 +33,14 @@ class Board
     @move.moves
   end
 
+  def ended?
+    return true if @move.empties.empty?
+    opponent_move = Move.new(@id, opponent)
+    @move.moves.empty? && opponent_move.moves.empty?
+  end
+
   def next_turn
-    @data[:turn] = @data[:turn] == :black ? :white : :black
+    @data[:turn] = opponent
     save
     @move = Move.new(@id, @data[:turn])
   end
@@ -47,6 +53,10 @@ class Board
 
   def save
     @data.write
+  end
+
+  def opponent
+    @data[:turn] == :black ? :white : :black
   end
 
   def add_accessors(attr)

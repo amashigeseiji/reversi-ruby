@@ -21,6 +21,14 @@ class Cells < Hash
     self.select { |i, cell| cell.y == y }
   end
 
+  def white
+    select {|index, cell| cell.white? }
+  end
+
+  def black
+    select {|index, cell| cell.black? }
+  end
+
   def setup
     cell(4, 4).set(:white)
     cell(5, 4).set(:black)

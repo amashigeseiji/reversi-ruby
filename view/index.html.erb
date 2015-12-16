@@ -11,7 +11,7 @@
 
 <body>
   <header class="container">
-    <h1>Othello</h1>
+    <h1>Reversi</h1>
   </header>
 
   <div class="container center">
@@ -41,16 +41,22 @@
         </div>
       </div>
       <div class="center">
-        <% if @board.move.moves.empty? %>
-          <button class="btn btn-default pass">パス</button>
-        <% end %>
-        <% @board.move.moves.each do |index, reversibles| %>
-          <button class="btn btn-default move cell_<%= index %>" data-index="<%= index %>">
-            <%= index %>
-            <span class="hidden reversible_cell_json">
-              <%= reversibles.map {|cell| cell.index }.to_json %>
-            </span>
-          </button>
+        <% if @board.ended? %>
+          <p>ゲーム終了</p>
+          <p>白: <%= @board.cells.white.length %></p>
+          <p>黒: <%= @board.cells.black.length %></p>
+        <% else %>
+            <% if @board.move.moves.empty? %>
+              <button class="btn btn-default pass">パス</button>
+            <% end %>
+            <% @board.move.moves.each do |index, reversibles| %>
+              <button class="btn btn-default move cell_<%= index %>" data-index="<%= index %>">
+                <%= index %>
+                <span class="hidden reversible_cell_json">
+                  <%= reversibles.map {|cell| cell.index }.to_json %>
+                </span>
+              </button>
+            <% end %>
         <% end %>
       </div>
     </div>

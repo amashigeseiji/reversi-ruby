@@ -23,14 +23,14 @@ class Move
     @empties.delete(move.index)
   end
 
+  def empties
+    @empties ||= board.cells.select {|key, cell| !cell.filled? }
+  end
+
   private
 
   def board
     Board.instance(@board_id)
-  end
-
-  def empties
-    @empties ||= board.cells.select {|key, cell| !cell.filled? }
   end
 
   def reversible_cells(move)
