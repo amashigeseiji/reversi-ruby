@@ -4,7 +4,7 @@ class Cell
   def initialize(x, y, board_id)
     @x = x
     @y = y
-    @index = Board.index(x, y)
+    @index = Cells.index(x, y)
     @color = nil
     @board_id = board_id
   end
@@ -45,7 +45,7 @@ class Cell
 
   def next_cell(vector)
     index = next_cell_index(vector)
-    board.cell index[0], index[1]
+    board.cells.cell index[0], index[1]
   end
 
   def board

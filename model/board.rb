@@ -5,39 +5,25 @@ class Board
   def initialize(id = nil)
     @data = Resource.find(id)
     @id = @data.id
+    add_accessors [:cells, :turn]
     setup unless @data.exist?
-    add_methods
     @@boards[@id] = self
   end
 
   def setup
-    create
-    cell(4, 4).set(:white)
-    cell(5, 4).set(:black)
-    cell(5, 5).set(:white)
-    cell(4, 5).set(:black)
+    @data[:cells] = Cells.new(@id)
+    @data[:cells].setup
     @data[:turn] = :black
-  end
-
-  def cell(x, y)
-    index = Board.index(x, y)
-    @data.cells.key?(index) ? @data.cells[index] : nil
-  end
-
-  def line(x)
-    @data.cells.select { |i, cell| cell.x == x }
-  end
-
-  def row(y)
-    @data.cells.select { |i, cell| cell.y == y }
+    save
   end
 
   def save
     @data.write
   end
 
-  def self.index(x, y)
-    x.to_s + '_' + y.to_s
+  def next_turn
+    @data[:turn] = @data[:turn] == :black ? :white : :black
+    save
   end
 
   def self.instance(board_id)
@@ -46,19 +32,8 @@ class Board
 
   private
 
-  def create
-    cells = {}
-    (1..8).each do |x|
-      (1..8).each do |y|
-        cells[Board.index(x, y)] = Cell.new(x, y, @id)
-      end
-    end
-    @data.cells = cells
-  end
-
-  def add_methods
-    #cells, turn
-    @data.data.keys.each do |key|
+  def add_accessors(attr)
+    attr.each do |key|
       self.class.class_eval do
         define_method "#{key}" do
           @data[key]

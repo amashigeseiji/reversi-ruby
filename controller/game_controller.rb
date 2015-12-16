@@ -9,7 +9,7 @@ class GameController
   end
 
   def move
-    cell = @board.cell(@request[:x], @request[:y])
+    cell = @board.cells.cell(@request[:x], @request[:y])
     raise BadRequestError.new('指定されたセルが存在しません') unless cell
     raise BadRequestError.new('すでに石が置かれています') if cell.filled?
     if @move.execute(cell)
@@ -19,7 +19,6 @@ class GameController
 
   def reset
     @board.setup
-    @board.save
     @move = Move.new(@board.id, @board.turn)
   end
 
@@ -47,8 +46,7 @@ class GameController
   end
 
   def next_turn
-    @board.turn = @board.turn == :white ? :black : :white
-    @board.save
+    @board.next_turn
     @move = Move.new(@board.id, @board.turn)
   end
 end
