@@ -1,65 +1,75 @@
 class Board
   @@boards = {}
-  attr_reader :data, :id
+  attr_reader :id, :move
 
   def initialize(id = nil)
     @data = Resource.find(id)
     @id = @data.id
+    add_accessors [:cells, :turn]
     setup unless @data.exist?
     @@boards[@id] = self
+    @move = Move.new(@id, @data[:turn])
   end
 
   def setup
-    create
-    find(4, 4).set(:white)
-    find(5, 4).set(:black)
-    find(5, 5).set(:white)
-    find(4, 5).set(:black)
+    @data[:cells] = Cells.new(@id)
+    @data[:cells].setup
+    @data[:turn] = :black
+    save
   end
 
-  def cells
-    @data.cells
+  def reset
+    setup
+    @move = Move.new(@id, @data[:turn])
   end
 
-  def find(x, y)
-    index = Board.index(x, y)
-    @data.cells.key?(index) ? @data.cells[index] : nil
+  def move_exec(cell)
+    if @move.execute(cell)
+      next_turn
+    end
   end
 
-  def method_missing(name, *args, &block)
-    raise NoMethodError, "undefined method `#{name}` is called." unless @data.cells.respond_to?(name)
-    @data.cells.send(name, *args, &block)
+  def moves
+    @move.moves
   end
 
-  def line(x)
-    @data.cells.select { |i, cell| cell.x == x }
+  def ended?
+    return true if @move.empties.empty?
+    opponent_move = Move.new(@id, opponent)
+    @move.moves.empty? && opponent_move.moves.empty?
   end
 
-  def row(y)
-    @data.cells.select { |i, cell| cell.y == y }
+  def next_turn
+    @data[:turn] = opponent
+    save
+    @move = Move.new(@id, @data[:turn])
   end
+
+  def self.instance(board_id)
+    @@boards[board_id] ||= Board.new(board_id)
+  end
+
+  private
 
   def save
     @data.write
   end
 
-  def self.index(x, y)
-    x.to_s + '_' + y.to_s
+  def opponent
+    @data[:turn] == :black ? :white : :black
   end
 
-  def self.instance(board_id)
-    @@boards[board_id] || Board.new(board_id)
-  end
+  def add_accessors(attr)
+    attr.each do |key|
+      self.class.class_eval do
+        define_method "#{key}" do
+          @data[key]
+        end
 
-  private
-
-  def create
-    cells = {}
-    (1..8).each do |x|
-      (1..8).each do |y|
-        cells[Board.index(x, y)] = Cell.new(x, y, @id)
+        define_method "#{key}=" do |value|
+          @data[key] = value
+        end
       end
     end
-    @data.cells = cells
   end
 end
