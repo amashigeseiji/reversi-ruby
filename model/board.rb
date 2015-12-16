@@ -1,6 +1,6 @@
 class Board
   @@boards = {}
-  attr_reader :id
+  attr_reader :id, :move
 
   def initialize(id = nil)
     @data = Resource.find(id)
@@ -8,6 +8,7 @@ class Board
     add_accessors [:cells, :turn]
     setup unless @data.exist?
     @@boards[@id] = self
+    @move = Move.new(@id, @data[:turn])
   end
 
   def setup
@@ -17,13 +18,25 @@ class Board
     save
   end
 
-  def save
-    @data.write
+  def reset
+    setup
+    @move = Move.new(@id, @data[:turn])
+  end
+
+  def move_exec(cell)
+    if @move.execute(cell)
+      next_turn
+    end
+  end
+
+  def moves
+    @move.moves
   end
 
   def next_turn
     @data[:turn] = @data[:turn] == :black ? :white : :black
     save
+    @move = Move.new(@id, @data[:turn])
   end
 
   def self.instance(board_id)
@@ -31,6 +44,10 @@ class Board
   end
 
   private
+
+  def save
+    @data.write
+  end
 
   def add_accessors(attr)
     attr.each do |key|

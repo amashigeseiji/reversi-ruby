@@ -2,7 +2,6 @@ class GameController
   def initialize(request)
     @request = request
     set_board
-    @move = Move.new(@board.id, @board.turn)
   end
 
   def index
@@ -12,19 +11,16 @@ class GameController
     cell = @board.cells.cell(@request[:x], @request[:y])
     raise BadRequestError.new('指定されたセルが存在しません') unless cell
     raise BadRequestError.new('すでに石が置かれています') if cell.filled?
-    if @move.execute(cell)
-      next_turn
-    end
+    @board.move_exec(cell)
   end
 
   def reset
-    @board.setup
-    @move = Move.new(@board.id, @board.turn)
+    @board.reset
   end
 
   def pass
-    raise BadRequestError.new('指すことができるのでパスできません') unless @move.moves.empty?
-    next_turn
+    raise BadRequestError.new('指すことができるのでパスできません') unless @board.moves.empty?
+    @board.next_turn
   end
 
   private
@@ -43,10 +39,5 @@ class GameController
 
   def session
     @request.session
-  end
-
-  def next_turn
-    @board.next_turn
-    @move = Move.new(@board.id, @board.turn)
   end
 end
