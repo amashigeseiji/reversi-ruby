@@ -8,8 +8,8 @@ class RequestHandler
     Rack::Response.new do |response|
       execute
       response.status = @status
-      response['Content-Type'] = 'text/html'
-      response.write render
+      response['Content-Type'] = content_type
+      response.write view.render
     end
   end
 
@@ -28,7 +28,11 @@ class RequestHandler
     end
   end
 
-  def render
-    View.new(@controller).html
+  def content_type
+    @request.xhr? ? 'application/json' : 'text/html'
+  end
+
+  def view
+    @view ||= View.new(@controller)
   end
 end

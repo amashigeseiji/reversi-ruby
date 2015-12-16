@@ -8,8 +8,17 @@ class View
     end
   end
 
+  def render
+    send @request.xhr? ? :json : :html
+  end
+
   def html
-    erb = ERB.new(File.read('./view/index.html.erb'))
+    erb = ERB.new(open('./view/index.html.erb', &:read))
+    erb.result(binding)
+  end
+
+  def json
+    erb = ERB.new(open("./view/#{@request.action}.json.erb", &:read))
     erb.result(binding)
   end
 end
