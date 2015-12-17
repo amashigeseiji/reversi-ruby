@@ -60,6 +60,10 @@ class Cell
     %w(right left below above right-below right-above left-below left-above)
   end
 
+  def to_hash
+    { x: @x, y: @y, index: @index, color: @color }
+  end
+
   private
 
   def next_cell_index(vector)

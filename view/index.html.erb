@@ -7,6 +7,14 @@
   <link rel="stylesheet" href="/css/style.css">
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
   <script src='/js/script.js'></script>
+  <script src='/js/underscore.js'></script>
+  <script type="text/javascript">
+  _.templateSettings = {
+      interpolate: /\{\{(.+?)\}\}/g,
+      escape : /\{\{-(.+?)\}\}/g,
+      evaluate: /\{\{(.+?)\}\}/g,
+  };
+  </script>
 </head>
 
 <body>
@@ -16,7 +24,7 @@
 
   <div class="container center">
 
-    <table>
+    <table id="board_table">
       <tbody>
         <% (1..8).each do |y| %>
           <tr>
@@ -33,9 +41,9 @@
 
   <footer class="container">
 
-    <div>
+    <div class="operator">
       <div class="clearfix">
-        <p class="pull-left">ターン: <strong><%= @board.turn %></strong></p>
+        <p class="pull-left">ターン: <strong class="current_turn"><%= @board.turn %></strong></p>
         <div class="pull-right">
           <button class="btn btn-danger btn-alert" onclick="location.href='/reset'">リセット</button>
         </div>
@@ -46,6 +54,7 @@
           <p>白: <%= @board.cells.white.length %></p>
           <p>黒: <%= @board.cells.black.length %></p>
         <% else %>
+          <div class="moves">
             <% if @board.move.moves.empty? %>
               <button class="btn btn-default pass">パス</button>
             <% end %>
@@ -57,6 +66,7 @@
                 </span>
               </button>
             <% end %>
+          </div>
         <% end %>
       </div>
     </div>
