@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/css/style.css">
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
   <script src='/js/script.js'></script>
+  <script src='/js/underscore.js'></script>
 </head>
 
 <body>
@@ -16,7 +17,7 @@
 
   <div class="container center">
 
-    <table>
+    <table id="board_table">
       <tbody>
         <% (1..8).each do |y| %>
           <tr>
@@ -33,22 +34,22 @@
 
   <footer class="container">
 
-    <div>
+    <div class="operator">
       <div class="clearfix">
-        <p class="pull-left">ターン: <strong><%= @board.turn %></strong></p>
+        <p class="pull-left">ターン: <strong class="current_turn"><%= @board.turn %></strong></p>
         <div class="pull-right">
-          <button class="btn btn-danger btn-alert" onclick="location.href='/reset'">リセット</button>
+          <button class="btn btn-danger btn-alert reset">リセット</button>
         </div>
       </div>
       <div class="center">
-        <% if @board.ended? %>
-          <p>ゲーム終了</p>
-          <p>白: <%= @board.cells.white.length %></p>
-          <p>黒: <%= @board.cells.black.length %></p>
-        <% else %>
-            <% if @board.move.moves.empty? %>
+        <div class="moves">
+          <% if @board.ended? %>
+            <p>ゲーム終了</p>
+            <p>白: <%= @board.cells.white.length %></p>
+            <p>黒: <%= @board.cells.black.length %></p>
+          <% elsif @board.move.moves.empty? %>
               <button class="btn btn-default pass">パス</button>
-            <% end %>
+          <% else %>
             <% @board.move.moves.each do |index, reversibles| %>
               <button class="btn btn-default move cell_<%= index %>" data-index="<%= index %>">
                 <%= index %>
@@ -57,7 +58,8 @@
                 </span>
               </button>
             <% end %>
-        <% end %>
+          <% end %>
+        </div>
       </div>
     </div>
 
