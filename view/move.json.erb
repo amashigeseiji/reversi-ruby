@@ -1,15 +1,17 @@
-<%
+<%=
   cells = @board.cells.map { |index, cell| cell.to_hash }
   moves = {}
   @board.moves.map do |index, movables|
     moves[index] = movables.map {|cell| cell.to_hash }
   end
-%>
 
-{
-  "message": "<%= @error %>",
-  "moves": <%= moves.to_json %>,
-  "cells": <%= cells.to_json %>,
-  "turn": "<%= @board.turn %>",
-  "ended": <%= @board.ended? %>
-}
+  {
+    message: @error,
+    moves:   moves,
+    cells:   cells,
+    turn:    @board.turn,
+    ended:   @board.ended?,
+    white:   @board.cells.white.length,
+    black:   @board.cells.black.length
+  }.to_json
+%>

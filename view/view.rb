@@ -18,7 +18,8 @@ class View
   end
 
   def json
-    erb = ERB.new(open("./view/#{@request.action}.json.erb", &:read))
+    #erb = ERB.new(open("./view/#{@request.action}.json.erb", &:read))
+    erb = ERB.new(open("./view/move.json.erb", &:read))
     erb.result(binding)
   end
 end
