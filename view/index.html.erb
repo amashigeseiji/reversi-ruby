@@ -30,9 +30,6 @@
         <% end %>
       </tbody>
     </table>
-  </div>
-
-  <footer class="container">
 
     <div class="operator">
       <div class="clearfix">
@@ -41,31 +38,13 @@
           <button class="btn btn-danger btn-alert reset">リセット</button>
         </div>
       </div>
-      <div class="center">
-        <div class="moves">
-          <% if @board.ended? %>
-            <p>ゲーム終了</p>
-            <p>白: <%= @board.cells.white.length %></p>
-            <p>黒: <%= @board.cells.black.length %></p>
-          <% elsif @board.move.moves.empty? %>
-              <button class="btn btn-default pass">パス</button>
-          <% else %>
-            <% @board.move.moves.each do |index, reversibles| %>
-              <button class="btn btn-default move cell_<%= index %>" data-index="<%= index %>">
-                <%= index %>
-                <span class="hidden reversible_cell_json">
-                  <%= reversibles.map {|cell| cell.index }.to_json %>
-                </span>
-              </button>
-            <% end %>
-          <% end %>
-        </div>
-      </div>
+      <div class="moves"></div>
+      <p class="error"><%= @error if @error %></p>
     </div>
 
+  </div>
 
-    <p><%= @error if @error %></p>
-
+  <footer class="container">
     <% if @request.dev? %>
     <ul>
       <% @request.inspect.split(', "').each do |val| %>

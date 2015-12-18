@@ -2,7 +2,7 @@ $(document).ready(function(){
 
     function Move() {
         this.view = new View
-        this.listen()
+        this.execute('index')
     }
 
     /**
@@ -29,7 +29,7 @@ $(document).ready(function(){
      * @return void
      */
     Move.prototype.execute = function(url, data) {
-        $.ajax({
+        return $.ajax({
             url: url,
             data: data,
             context: this

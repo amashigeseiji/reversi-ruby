@@ -54,3 +54,6 @@ footer {
 .container {
   width: 500px;
 }
+.container > .operator {
+  margin-top: 50px;
+}
