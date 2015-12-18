@@ -3,6 +3,7 @@ $(document).ready(function(){
     function Move() {
         this.view = new View
         this.execute('index')
+        this.bind('.reset', 'click', 'reset')
     }
 
     /**
@@ -28,17 +29,23 @@ $(document).ready(function(){
      * @param data object 送信するデータ
      * @return void
      */
-    Move.prototype.execute = function(url, data) {
+    Move.prototype.execute = function(url, data, context) {
         return $.ajax({
             url: url,
             data: data,
-            context: this
+            context: context || this
         })
         .done(function(data) {
             this.release()
             this.view.update(data)
-            this.listen()
-        } )
+            if (!data.ended && data.turn == 'white') {
+                //再帰呼び出しの中で this が変化するので
+                //外部から context を指定する
+                setTimeout(this.execute, 500, 'ai', {}, this)
+            } else {
+                this.listen()
+            }
+        })
         .fail(function(data) {
             console.log(JSON.parse(data.responseText).message)
         })
@@ -53,7 +60,6 @@ $(document).ready(function(){
         this.bind('.cell.movable, .move', 'click', 'move')
         this.bind('.cell.movable, .move', 'mouseenter mouseleave', 'toggle')
         this.bind('.pass', 'click', 'pass')
-        this.bind('.reset', 'click', 'reset')
     }
 
     /**
@@ -64,7 +70,6 @@ $(document).ready(function(){
     Move.prototype.release = function() {
         $('.cell.movable, .move').unbind('click mouseenter mouseleave')
         $('.pass').unbind('click')
-        $('.reset').unbind('click')
     }
 
     Move.prototype.move = function(selector) {
