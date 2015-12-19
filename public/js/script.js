@@ -2,6 +2,7 @@ $(document).ready(function(){
 
     function Move() {
         this.view = new View
+        this.data = {}
         this.execute('index')
         this.bind('.reset', 'click', 'reset')
     }
@@ -37,6 +38,7 @@ $(document).ready(function(){
         })
         .done(function(data) {
             this.release()
+            this.data = data
             this.view.update(data)
             if (!data.ended && data.turn == 'white') {
                 //再帰呼び出しの中で this が変化するので
@@ -86,12 +88,11 @@ $(document).ready(function(){
     }
 
     Move.prototype.toggle = function(selector) {
-        var cell = $('.cell_' + $(selector).data('index'))
-        cell.toggleClass('hover')
+        var index = $(selector).data('index')
+        $('.cell_' + index).toggleClass('hover')
 
-        var reversibles = JSON.parse(cell.find('span.reversible_cell_json').text())
-        $.each (reversibles, function(key, value) {
-            $('#cell_' + value).find('span').toggleClass('reversible')
+        $.each (this.data.moves[index], function(key, cell) {
+            $('#cell_' + cell.index + ' > span.disc').toggleClass('reversible')
         })
     }
 
@@ -101,7 +102,7 @@ $(document).ready(function(){
     function View() {
         this.templates
         .add('move',
-            '<button class="btn btn-default move cell_<%- index %>" data-index="<%- index %>"><%- index %><span class="hidden reversible_cell_json"><%- JSON.stringify(reversibles) %></span></button>'
+            '<button class="btn btn-default move cell_<%- index %>" data-index="<%- index %>"><%- index %></button>'
         )
         .add('pass',
             '<button class="btn btn-default pass">パス</button>'
@@ -169,8 +170,7 @@ $(document).ready(function(){
         }
 
         for (var index in data.moves) {
-            var indices = _.map(data.moves[index], function(val) { return val.index })
-            moves.append(this.templates.render('move', {index: index, reversibles: indices}))
+            moves.append(this.templates.render('move', {index: index}))
         }
     }
 
