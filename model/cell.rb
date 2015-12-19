@@ -64,6 +64,14 @@ class Cell
     { x: @x, y: @y, index: @index, color: @color }
   end
 
+  def corner?
+    (@x == 1 && (@y == 1 || @y == 8)) || (@x == 8 && (@y == 1 || @y == 8))
+  end
+
+  def wall?
+    @x == 1 || @x == 8 || @y == 1 || @y == 8
+  end
+
   private
 
   def next_cell_index(vector)
