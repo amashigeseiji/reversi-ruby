@@ -23,6 +23,14 @@ class GameController
     @board.next_turn
   end
 
+  def ai
+    return send :pass if @board.moves.empty?
+    move = @board.moves.keys.sample(1)[0].split('_')
+    @request[:x] = move[0]
+    @request[:y] = move[1]
+    send :move
+  end
+
   private
 
   def set_board

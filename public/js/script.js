@@ -2,7 +2,9 @@ $(document).ready(function(){
 
     function Move() {
         this.view = new View
+        this.data = {}
         this.execute('index')
+        this.bind('.reset', 'click', 'reset')
     }
 
     /**
@@ -28,17 +30,24 @@ $(document).ready(function(){
      * @param data object 送信するデータ
      * @return void
      */
-    Move.prototype.execute = function(url, data) {
+    Move.prototype.execute = function(url, data, context) {
         return $.ajax({
             url: url,
             data: data,
-            context: this
+            context: context || this
         })
         .done(function(data) {
             this.release()
+            this.data = data
             this.view.update(data)
-            this.listen()
-        } )
+            if (!data.ended && data.turn == 'white') {
+                //再帰呼び出しの中で this が変化するので
+                //外部から context を指定する
+                setTimeout(this.execute, 500, 'ai', {}, this)
+            } else {
+                this.listen()
+            }
+        })
         .fail(function(data) {
             console.log(JSON.parse(data.responseText).message)
         })
@@ -53,7 +62,6 @@ $(document).ready(function(){
         this.bind('.cell.movable, .move', 'click', 'move')
         this.bind('.cell.movable, .move', 'mouseenter mouseleave', 'toggle')
         this.bind('.pass', 'click', 'pass')
-        this.bind('.reset', 'click', 'reset')
     }
 
     /**
@@ -64,7 +72,6 @@ $(document).ready(function(){
     Move.prototype.release = function() {
         $('.cell.movable, .move').unbind('click mouseenter mouseleave')
         $('.pass').unbind('click')
-        $('.reset').unbind('click')
     }
 
     Move.prototype.move = function(selector) {
@@ -81,12 +88,11 @@ $(document).ready(function(){
     }
 
     Move.prototype.toggle = function(selector) {
-        var cell = $('.cell_' + $(selector).data('index'))
-        cell.toggleClass('hover')
+        var index = $(selector).data('index')
+        $('.cell_' + index).toggleClass('hover')
 
-        var reversibles = JSON.parse(cell.find('span.reversible_cell_json').text())
-        $.each (reversibles, function(key, value) {
-            $('#cell_' + value).find('span').toggleClass('reversible')
+        $.each (this.data.moves[index], function(key, cell) {
+            $('#cell_' + cell.index + ' > span.disc').toggleClass('reversible')
         })
     }
 
@@ -96,7 +102,7 @@ $(document).ready(function(){
     function View() {
         this.templates
         .add('move',
-            '<button class="btn btn-default move cell_<%- index %>" data-index="<%- index %>"><%- index %><span class="hidden reversible_cell_json"><%- JSON.stringify(reversibles) %></span></button>'
+            '<button class="btn btn-default move cell_<%- index %>" data-index="<%- index %>"><%- index %></button>'
         )
         .add('pass',
             '<button class="btn btn-default pass">パス</button>'
@@ -164,8 +170,7 @@ $(document).ready(function(){
         }
 
         for (var index in data.moves) {
-            var indices = _.map(data.moves[index], function(val) { return val.index })
-            moves.append(this.templates.render('move', {index: index, reversibles: indices}))
+            moves.append(this.templates.render('move', {index: index}))
         }
     }
 
