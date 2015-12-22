@@ -24,10 +24,11 @@ class GameController
   end
 
   def ai
-    return send :pass if @board.moves.empty?
-    move = @board.moves.keys.sample(1)[0].split('_')
-    @request[:x] = move[0]
-    @request[:y] = move[1]
+    @ai ||= AI.new(@board.id)
+    cell = @ai.move
+    return send :pass if cell.nil?
+    @request[:x] = cell.x
+    @request[:y] = cell.y
     send :move
   end
 

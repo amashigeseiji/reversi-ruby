@@ -1,4 +1,4 @@
-require 'SecureRandom'
+require 'securerandom'
 
 class Resource
   attr_reader :id
