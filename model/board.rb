@@ -49,6 +49,13 @@ class Board
     @@boards[board_id] ||= Board.new(board_id)
   end
 
+  def self.delete(board_id)
+    if @@boards.has_key? board_id
+      @@boards.delete(board_id)
+      Resource.delete(board_id)
+    end
+  end
+
   private
 
   def save

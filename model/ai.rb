@@ -18,17 +18,13 @@ class AI
     cell(evaluated.min_by { |_, item| item }.first)
   end
 
-  def simulate(cell_index)
-    simulator = Simulator.new(@board_id)
-    simulator.move_exec cell_index
-    simulator
-  end
-
   def evaluate_opponent(cell_index)
-    simulator = simulate(cell_index)
     evaluated = 0
-    simulator.moves.each do |index, cells|
-      evaluated += evaluate(simulator.cells[index], cells)
+    Simulator.simulate(@board_id) do |board|
+      board.move_exec board.cells[cell_index]
+      board.moves.each do |index, cells|
+        evaluated += evaluate(board.cells[index], cells)
+      end
     end
     evaluated
   end
