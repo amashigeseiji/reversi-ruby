@@ -22,6 +22,7 @@ class RequestHandler
       raise BadRequestError.new('指定されたURLが間違っています') unless actions.include? @request.action.to_sym
       @controller.send @request.action
     rescue BadRequestError, ReversiError => e
+      @status = 400
       @controller.instance_variable_set(:@error, e.message)
     rescue StandardError => e
       raise e
