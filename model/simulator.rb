@@ -1,7 +1,7 @@
 class Simulator
   def initialize(board_id)
     @orig_board_id = board_id
-    @clone_id = 'sandbox/' + board_id.to_s
+    @clone_id = 'sandbox/' + Resource.random
   end
 
   def create_sandbox(&block)
