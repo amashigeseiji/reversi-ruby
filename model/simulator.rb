@@ -1,38 +1,47 @@
 class Simulator
   def initialize(board_id)
     @orig_board_id = board_id
-    @clone_id = 'sandbox_' + board_id.to_s
+    @clone_id = 'sandbox/' + board_id.to_s
   end
 
-  def orig
-    Board.instance(@orig_board_id)
-  end
-
-  def board
-    @board ||= setup
-  end
-
-  def setup
+  def create_sandbox(&block)
+    Dir::mkdir './data/sandbox/' unless Dir::exist? './data/sandbox'
     resource = Resource.new(@clone_id)
     resource.cells = nil
     resource.turn = orig.turn
     resource.write
 
-    @board = Board.new(@clone_id)
-    @board.cells = Cells.new(@clone_id)
-
-    @board.cells.each do |index, cell|
-      cell.instance_variable_set(:@color, orig.cells[index].color)
+    board = Board.new(@clone_id)
+    board.cells = Cells.new(@clone_id)
+    board.cells.each do |index, cell|
+     cell.instance_variable_set(:@color, orig.cells[index].color)
     end
-    @board.instance_variable_set(:@move, Move.new(@clone_id, @board.turn))
-    @board
+    board.instance_variable_set(:@move, Move.new(@clone_id, board.turn))
+
+    yield board
   end
 
-  def move_exec(index)
-    board.move_exec board.cells[index]
+  def destroy
+    Board.delete(@clone_id)
   end
 
-  def method_missing(name, *args)
-    @board.send(name) if @board.respond_to?(name)
+  # sandbox 環境内で与えられたブロックを評価する
+  def self.simulate(board_id, &block)
+    simulator = Simulator.new(board_id)
+    begin
+      simulator.create_sandbox do |board|
+        yield board
+      end
+    rescue StandardError => e
+      raise SimulatorError.new('Simulator Error: ' + e.message)
+    ensure
+      simulator.destroy
+    end
+  end
+
+  private
+
+  def orig
+    Board.instance(@orig_board_id)
   end
 end

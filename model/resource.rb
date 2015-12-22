@@ -17,10 +17,6 @@ class Resource
     File.open(filename, 'w') { |f| f.write(Marshal.dump(@data)) }
   end
 
-  def delete
-    File.delete(filename)
-  end
-
   def method_missing(name, *args)
     if name =~ /(.*)=$/
       set($1, args[0])
@@ -47,6 +43,10 @@ class Resource
 
   def self.find(id)
     File.exist?(Resource.dir + id.to_s) ? Resource.new(id) : Resource.new
+  end
+
+  def self.delete(id)
+    File.delete(Resource.dir + id.to_s)
   end
 
   def self.random
