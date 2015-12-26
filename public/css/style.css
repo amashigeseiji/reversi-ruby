@@ -1,32 +1,55 @@
-body {
-  width: 80%;
-  margin: 0 auto;
+@media screen and (min-width:769px) {
+  body {
+    width: 600px;
+    margin: 0 auto;
+  }
 }
-.center {
-  text-align:center;
+@media screen and (max-width: 769px) {
+  body {
+    width: 90%;
+    margin: 0 auto;
+  }
 }
+
+header, footer {
+  margin-bottom: 50px;
+}
+
+.operator {
+  margin-top: 50px;
+}
+
 table {
   border-collapse: collapse;
   margin: 0 auto;
 }
-tbody td {
-  background-color: #faffff;
-}
 td.cell {
+  background-color: #faffff;
   border: 1px #ccc solid;
-  width: 50px;
-  height: 50px;
   text-align: center;
   background: #090;
   line-height: 0;
 }
-td.cell > .disc {
-  display: inline-block;
-  width: 2em;
-  height: 2em;
-  border-radius: 1em;
-  margin: 0.25em;
+
+@media screen and (min-width:769px) {
+  td.cell > .disc {
+    display: inline-block;
+    width: 3em;
+    height: 3em;
+    border-radius: 1.5em;
+    margin: 0.75em;
+  }
 }
+@media screen and (max-width:769px) {
+  td.cell > .disc {
+    display: inline-block;
+    width: 1.25em;
+    height: 1.25em;
+    border-radius: 0.75em;
+    margin: 0.5em;
+  }
+}
+
 td.cell > .disc.white {
   background: #fff;
 }
@@ -42,18 +65,4 @@ td.cell:hover, td.cell.movable.hover {
 }
 td.cell.movable:hover, td.cell.movable.hover {
   background-color: rgba(200, 250, 200, 0.9);
-}
-
-header {
-  margin-bottom: 50px;
-}
-footer {
-  margin-top: 50px;
-}
-
-.container {
-  width: 500px;
-}
-.container > .operator {
-  margin-top: 50px;
 }
