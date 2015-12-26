@@ -7,38 +7,37 @@ class AI
     return nil if board.moves.empty?
     # ruby 2.1以上
     cell board.moves
-      .map {|index, reversibles| [index, evaluate(index, reversibles)]}
+      .map {|index, move| [index, evaluate(move)]}
       .to_h
       .max_by { |_, item| item }[0]
   end
 
   # 指し手の評価
-  def evaluate(move_index, reversibles)
+  def evaluate(move)
     # 一手の評価点
-    move_point = ->(index, cells) {
+    score = ->(amove) {
       point = 0
-      cell = cell(index)
-      point += point(cell) if cell.corner?
-      point += evaluate_cells(cells.map {|i| i }.push(cell))
+      cell = cell(amove.index)
+      point += point(amove.cell) if amove.cell.corner?
+      point += evaluate_cells(amove.reversibles.map {|i| i }.push(amove.cell))
       point
     }
 
-    # とりあえず初期値を100点としておく（特に理由はないが正の整数のほうが見やすいため）
-    evaluated = 100
+    evaluated = 0
 
     # 自分の指し手でひっくり返せるセルの合計点を加算
-    evaluated += move_point.call(move_index, reversibles)
+    evaluated += score.call(move)
 
-    simulate(@board_id, move_index) do |board|
+    simulate(@board_id, move.index) do |board|
       included = false
       my_corner = []
 
       # 対戦相手の指し手
-      board.moves.each do |index, cells|
+      board.moves.each do |index, next_move|
         # 相手の指し手の合計点を減算（相手の指し手の合計点が低いほうがよい）
-        evaluated -= move_point.call(index, cells)
+        evaluated -= score.call(next_move)
         # AIが指した手が対戦相手にとられるかどうか
-        included = cells.map {|cell| cell.index}.include?(move_index) unless included
+        included = next_move.reversibles.map {|cell| cell.index}.include?(move.index) unless included
         # 次番のAIの指し手
         simulate(board.id, index) do |next_board|
           # 次の自分の盤の指し手で角が取れるかどうか(すべて true なら確実に角が取れる手)

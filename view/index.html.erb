@@ -24,7 +24,7 @@
         <% (1..8).each do |y| %>
           <tr>
             <% @board.cells.row(y).each_value do |cell| %>
-              <td class="cell<%= ' movable' if @board.move.moves.has_key? cell.index %> cell_<%= cell.index %>" id="cell_<%= cell.index %>" data-index="<%= cell.index %>">
+              <td class="cell<%= ' movable' if @board.moves.has_key? cell.index %> cell_<%= cell.index %>" id="cell_<%= cell.index %>" data-index="<%= cell.index %>">
                 <span class="disc <%= cell.color.send(:to_s) %>"></span>
               </td>
             <% end %>

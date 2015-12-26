@@ -1,6 +1,6 @@
 class Board
   @@boards = {}
-  attr_reader :id, :move
+  attr_reader :id
 
   def initialize(id = nil)
     @data = Resource.find(id)
@@ -8,7 +8,6 @@ class Board
     add_accessors [:cells, :turn]
     setup unless @data.exist?
     @@boards[@id] = self
-    @move = Move.new(@id, @data[:turn])
   end
 
   def setup
@@ -20,29 +19,28 @@ class Board
 
   def reset
     setup
-    @move = Move.new(@id, @data[:turn])
+    @moves = Moves.new(@id, @data[:turn])
   end
 
   def move_exec(cell)
-    if @move.execute(cell)
+    if moves[cell.index].execute
       next_turn
     end
   end
 
   def moves
-    @move.moves
+    @moves ||= Moves.new(@id, @data[:turn])
   end
 
   def ended?
-    return true if @move.empties.empty?
-    opponent_move = Move.new(@id, opponent)
-    @move.moves.empty? && opponent_move.moves.empty?
+    return true if @data.cells.empties.empty?
+    moves.empty? && moves.opponent.empty?
   end
 
   def next_turn
     @data[:turn] = opponent
     save
-    @move = Move.new(@id, @data[:turn])
+    @moves = Moves.new(@id, @data[:turn])
   end
 
   def self.instance(board_id)

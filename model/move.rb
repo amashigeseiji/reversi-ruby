@@ -1,88 +1,35 @@
 class Move
-  def initialize(board_id, turn)
-    @board_id = board_id
-    @turn = turn.to_sym
-  end
-
-  def moves
-    return @moves if @moves
-    @moves = {}
-    empties.each do |index, cell|
-      cells = reversible_cells(cell)
-      @moves[cell.index] = cells unless cells.empty?
+  attr_reader :index, :reversibles
+  def initialize(index, reversibles, turn, board_id)
+    if index.is_a? Array
+      @x = index[0]
+      @y = index[1]
+      @index = @x.to_s + '_' + @y.to_s
+    elsif index.is_a? String
+      @index = index
+      tmp = @index.split('_')
+      @x = tmp[0]
+      @y = tmp[1]
     end
-    @moves
+    @turn = turn
+    @reversibles = reversibles
+    @board_id = board_id
   end
 
-  def execute(move)
-    raise_if !moves.has_key?(move.index)
-    move.set(@turn)
-    moves[move.index].each do |cell|
+  def execute
+    cell.set(@turn)
+    reversibles.each do |cell|
       cell.reverse
     end
-    @empties.delete(move.index)
   end
 
-  def empties
-    @empties ||= board.cells.select {|key, cell| !cell.filled? }
+  def cell
+    board.cells.cell(@x, @y)
   end
 
   private
 
   def board
     Board.instance(@board_id)
-  end
-
-  def reversible_cells(move)
-    cells = []
-
-    next_cells = next_cells move
-    return cells if next_cells.empty?
-
-    next_cells.each do |next_cell|
-      reversible_line(move, move.vector_to(next_cell)).each do |cell|
-        cells << cell
-      end
-    end
-    cells
-  end
-
-  def next_cells(move)
-    cells = []
-    Cell.vectors.each do |vector|
-      next_cell = move.next_cell(vector)
-      cells << next_cell if next_cell && next_cell.opposite_to?(@turn)
-    end
-    cells
-  end
-
-  def reversible_line(move, vector)
-    next_cell = move.next_cell(vector)
-    cells = [next_cell]
-    while true do
-      #同じ方向の次のセルを取得
-      next_cell = next_cell.next_cell(vector)
-      if !next_cell || !next_cell.filled?
-        #次のセルが存在しないまたは値がない場合は値をリセット
-        cells = []
-        break
-      end
-
-      if next_cell.opposite_to?(@turn)
-        #指し手と色が違う場合は配列に入れる
-        cells << next_cell
-      else
-        break
-      end
-    end
-    cells
-  end
-
-  def opposite
-    @turn == :white ? :black : :white
-  end
-
-  def raise_if(condition, message = nil)
-    raise ReversiError.new(message ? message : 'このセルには石を置けません') if condition
   end
 end

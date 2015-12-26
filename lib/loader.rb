@@ -1,5 +1,6 @@
 require './lib/app.rb'
 require './lib/errors.rb'
+require './model/moves.rb'
 require './model/move.rb'
 require './model/board.rb'
 require './model/cells.rb'

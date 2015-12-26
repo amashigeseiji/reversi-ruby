@@ -1,8 +1,8 @@
 <%=
   cells = @board.cells.map { |index, cell| cell.to_hash }
   moves = {}
-  @board.moves.map do |index, movables|
-    moves[index] = movables.map {|cell| cell.to_hash }
+  @board.moves.map do |index, move|
+    moves[index] = move.reversibles.map {|cell| cell.to_hash }
   end
 
   {
