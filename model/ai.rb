@@ -28,7 +28,7 @@ class AI
     # 自分の指し手でひっくり返せるセルの合計点を加算
     evaluated += score.call(move)
 
-    simulate(@board_id, move.index) do |board|
+    move.simulate do |board|
       included = false
       my_corner = []
 
@@ -39,7 +39,7 @@ class AI
         # AIが指した手が対戦相手にとられるかどうか
         included = next_move.reversibles.map {|cell| cell.index}.include?(move.index) unless included
         # 次番のAIの指し手
-        simulate(board.id, index) do |next_board|
+        next_move.simulate do |next_board|
           # 次の自分の盤の指し手で角が取れるかどうか(すべて true なら確実に角が取れる手)
           my_corner << next_board.moves.keys.any? {|i| i.match(/(1_1|1_8|8_1|8_8)/)}
         end
@@ -56,13 +56,6 @@ class AI
   end
 
   private
-
-  def simulate(board_id, index, &block)
-    Simulator.simulate(board_id) do |board|
-      board.move_exec board.cells[index]
-      yield board
-    end
-  end
 
   def cell(index)
     tmp = index.split('_')

@@ -16,7 +16,6 @@ class Simulator
     board.cells.each do |index, cell|
      cell.instance_variable_set(:@color, orig.cells[index].color)
     end
-    board.instance_variable_set(:@move, Moves.new(@clone_id, board.turn))
 
     yield board
   end

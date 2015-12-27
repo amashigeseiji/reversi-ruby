@@ -19,17 +19,11 @@ class Board
 
   def reset
     setup
-    @moves = Moves.new(@id, @data[:turn])
-  end
-
-  def move_exec(cell)
-    if moves[cell.index].execute
-      next_turn
-    end
+    @moves = Moves.new(@id)
   end
 
   def moves
-    @moves ||= Moves.new(@id, @data[:turn])
+    @moves ||= Moves.new(@id)
   end
 
   def ended?
@@ -40,7 +34,7 @@ class Board
   def next_turn
     @data[:turn] = opponent
     save
-    @moves = Moves.new(@id, @data[:turn])
+    @moves = Moves.new(@id)
   end
 
   def self.instance(board_id)
