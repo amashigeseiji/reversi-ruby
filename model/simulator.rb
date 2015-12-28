@@ -1,7 +1,7 @@
 class Simulator
   def initialize(board_id)
     @orig_board_id = board_id
-    @clone_id = 'sandbox/' + board_id.to_s
+    @clone_id = 'sandbox/' + Resource.random
   end
 
   def create_sandbox(&block)
@@ -16,7 +16,6 @@ class Simulator
     board.cells.each do |index, cell|
      cell.instance_variable_set(:@color, orig.cells[index].color)
     end
-    board.instance_variable_set(:@move, Move.new(@clone_id, board.turn))
 
     yield board
   end

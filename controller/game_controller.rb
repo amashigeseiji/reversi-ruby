@@ -11,7 +11,8 @@ class GameController
     cell = @board.cells.cell(@request[:x], @request[:y])
     raise BadRequestError.new('指定されたセルが存在しません') unless cell
     raise BadRequestError.new('すでに石が置かれています') if cell.filled?
-    @board.move_exec(cell)
+    raise BadRequestError.new('指定されたセルに石を置けません') unless @board.moves[cell.index]
+    @board.moves[cell.index].execute
   end
 
   def reset
@@ -25,7 +26,7 @@ class GameController
 
   def ai
     @ai ||= AI.new(@board.id)
-    cell = @ai.move
+    cell = @board.cells[@ai.choice]
     return send :pass if cell.nil?
     @request[:x] = cell.x
     @request[:y] = cell.y
