@@ -29,6 +29,10 @@ class Cells < Hash
     select {|index, cell| cell.black? }
   end
 
+  def empties
+    select {|key, cell| !cell.filled? }
+  end
+
   def setup
     cell(4, 4).set(:white)
     cell(5, 4).set(:black)

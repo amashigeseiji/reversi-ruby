@@ -1,63 +1,69 @@
 class Move
-  def initialize(board_id, turn)
-    @board_id = board_id
-    @turn = turn.to_sym
-  end
+  attr_reader :index
 
-  def moves
-    return @moves if @moves
-    @moves = {}
-    empties.each do |index, cell|
-      cells = reversible_cells(cell)
-      @moves[cell.index] = cells unless cells.empty?
+  def initialize(index, turn, board_id)
+    if index.is_a? Array
+      @x = index[0]
+      @y = index[1]
+      @index = @x.to_s + '_' + @y.to_s
+    elsif index.is_a? String
+      @index = index
+      tmp = @index.split('_')
+      @x = tmp[0]
+      @y = tmp[1]
     end
-    @moves
+    @turn = turn
+    @board_id = board_id
   end
 
-  def execute(move)
-    raise_if !moves.has_key?(move.index)
-    move.set(@turn)
-    moves[move.index].each do |cell|
+  def execute
+    cell.set(@turn)
+    reversibles.each do |cell|
       cell.reverse
     end
-    @empties.delete(move.index)
+    board.next_turn
   end
 
-  def empties
-    @empties ||= board.cells.select {|key, cell| !cell.filled? }
+  def simulate(&block)
+    Simulator.simulate(@board_id) do |board|
+      board.moves[index].execute
+      yield board
+    end
+  end
+
+  def cell
+    board.cells.cell(@x, @y)
+  end
+
+  def executable?
+    !reversibles.empty?
+  end
+
+  def reversibles
+    return @reversibles if @reversibles
+    @reversibles = []
+    next_cells.each do |next_cell|
+      reversible_line(cell.vector_to(next_cell)).each do |reversible|
+        @reversibles << reversible
+      end
+    end
+    @reversibles
   end
 
   private
 
-  def board
-    Board.instance(@board_id)
-  end
-
-  def reversible_cells(move)
-    cells = []
-
-    next_cells = next_cells move
-    return cells if next_cells.empty?
-
-    next_cells.each do |next_cell|
-      reversible_line(move, move.vector_to(next_cell)).each do |cell|
-        cells << cell
-      end
-    end
-    cells
-  end
-
-  def next_cells(move)
-    cells = []
+  def next_cells
+    return @next_cells if @next_cells
+    @next_cells = []
     Cell.vectors.each do |vector|
-      next_cell = move.next_cell(vector)
-      cells << next_cell if next_cell && next_cell.opposite_to?(@turn)
+      next_cell = cell.next_cell(vector)
+      @next_cells << next_cell if next_cell && next_cell.opposite_to?(@turn)
     end
-    cells
+    @next_cells
   end
 
-  def reversible_line(move, vector)
-    next_cell = move.next_cell(vector)
+  def reversible_line(vector)
+    next_cell = cell.next_cell(vector)
     cells = [next_cell]
     while true do
       #同じ方向の次のセルを取得
@@ -78,11 +84,7 @@ class Move
     cells
   end
 
-  def opposite
-    @turn == :white ? :black : :white
-  end
-
-  def raise_if(condition, message = nil)
-    raise ReversiError.new(message ? message : 'このセルには石を置けません') if condition
+  def board
+    Board.instance(@board_id)
   end
 end
