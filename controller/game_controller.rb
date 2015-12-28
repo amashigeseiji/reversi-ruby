@@ -26,7 +26,7 @@ class GameController
 
   def ai
     @ai ||= AI.new(@board.id)
-    cell = @ai.move
+    cell = @board.cells[@ai.choice]
     return send :pass if cell.nil?
     @request[:x] = cell.x
     @request[:y] = cell.y
