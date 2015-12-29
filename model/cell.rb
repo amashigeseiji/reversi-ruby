@@ -44,8 +44,7 @@ class Cell
   end
 
   def next_cell(vector)
-    index = next_cell_index(vector)
-    board.cells.cell index[0], index[1]
+    board.cells[next_cell_index(vector)]
   end
 
   def board

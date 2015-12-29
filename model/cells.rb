@@ -8,9 +8,9 @@ class Cells < Hash
     end
   end
 
-  def cell(x, y)
-    index = Cells.index(x, y)
-    self.key?(index) ? self[index] : nil
+  def [](index)
+    index = Cells.index(*index) if index.is_a? Array
+    super(index)
   end
 
   def line(x)
@@ -34,10 +34,10 @@ class Cells < Hash
   end
 
   def setup
-    cell(4, 4).set(:white)
-    cell(5, 4).set(:black)
-    cell(5, 5).set(:white)
-    cell(4, 5).set(:black)
+    self[[4, 4]].set(:white)
+    self[[5, 4]].set(:black)
+    self[[5, 5]].set(:white)
+    self[[4, 5]].set(:black)
   end
 
   def self.index(x, y)

@@ -8,7 +8,7 @@ class GameController
   end
 
   def move
-    cell = @board.cells.cell(@request[:x], @request[:y])
+    cell = @board.cells[[@request[:x], @request[:y]]]
     raise BadRequestError.new('指定されたセルが存在しません') unless cell
     raise BadRequestError.new('すでに石が置かれています') if cell.filled?
     raise BadRequestError.new('指定されたセルに石を置けません') unless @board.moves[cell.index]
