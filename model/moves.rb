@@ -9,7 +9,7 @@ class Moves < Hash
   end
 
   def opponent
-    Moves.new(@board_id, @turn == :white ? :black : :white)
+    @opponent ||= Moves.new(@board_id, @turn == :white ? :black : :white)
   end
 
   private

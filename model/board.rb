@@ -37,6 +37,10 @@ class Board
     @moves = Moves.new(@id)
   end
 
+  def win?(player)
+    cells.send(player).length > cells.send(player == :white ? :black : :white).length if ended?
+  end
+
   def self.instance(board_id)
     @@boards[board_id] ||= Board.new(board_id)
   end
