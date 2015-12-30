@@ -7,12 +7,18 @@ module Strategy
     def point(cell)
       if cell.corner?
         50
-      elsif cell.index.match(/(2_2|2_7|7_2|7_7)/)
-        -40
       elsif cell.wall?
         5
       else
-        1
+        corner_empty = cell.board.cells.select {|index, c| index =~ /1_1|1_8|8_1|8_8/ && !c.filled? }.map {|k, v|k}
+        if (cell.index == '2_2' && corner_empty.include?('1_1')) ||
+           (cell.index == '2_7' && corner_empty.include?('1_8')) ||
+           (cell.index == '7_2' && corner_empty.include?('8_1')) ||
+           (cell.index == '7_7' && corner_empty.include?('8_8'))
+          -40
+        else
+          1
+        end
       end
     end
 

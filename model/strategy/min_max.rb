@@ -1,7 +1,7 @@
 module Strategy
   class MinMax < AbstractStrategy
     def evaluate(board)
-      @search_level = 2
+      @search_level = 3
       min_max(board, @search_level)
     end
 
