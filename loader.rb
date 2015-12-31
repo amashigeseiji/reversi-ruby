@@ -5,7 +5,7 @@ load_dir = ->(dir) {
   end
 }
 
-%w(lib model controller view).each do |dir|
+%w(lib model controller).each do |dir|
   load_dir.call(dir)
 end
 
