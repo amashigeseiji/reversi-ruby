@@ -43,6 +43,7 @@ $(document).ready(function(){
             if (!data.ended && data.turn == 'white') {
                 //再帰呼び出しの中で this が変化するので
                 //外部から context を指定する
+                (context||this).view.loading.show()
                 setTimeout(this.execute, 500, 'ai', {}, this)
             } else {
                 this.listen()
@@ -50,6 +51,9 @@ $(document).ready(function(){
         })
         .fail(function(data) {
             console.log(JSON.parse(data.responseText).message)
+        })
+        .always(function() {
+            (context||this).view.loading.hide()
         })
     }
 
@@ -102,7 +106,7 @@ $(document).ready(function(){
     function View() {
         this.templates
         .add('move',
-            '<button class="btn btn-default move cell_<%- index %>" data-index="<%- index %>"><%- index %></button>'
+            '<button class="btn btn-default move cell_<%- index %>"<% if (disable){ %> disabled="true"<% } %> data-index="<%- index %>"><%- index %></button>'
         )
         .add('pass',
             '<button class="btn btn-default pass">パス</button>'
@@ -169,8 +173,18 @@ $(document).ready(function(){
             return moves.append(this.templates.render('pass'))
         }
 
+        var disable = data.turn == 'white' ? 'disable' : null
         for (var index in data.moves) {
-            moves.append(this.templates.render('move', {index: index}))
+            moves.append(this.templates.render('move', {index: index, disable: disable}))
+        }
+    }
+
+    View.prototype.loading = {
+        show: function() {
+            $('.operator .moves').append('<p class="loading">thinking...</p>')
+        },
+        hide: function() {
+            $('.operator > .loading').remove()
         }
     }
 
