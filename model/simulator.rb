@@ -7,8 +7,8 @@ class Simulator
   def create_sandbox(&block)
     game = Game.new(@clone_id, true)
     game.cells = Cells.new(@clone_id)
-    game.cells.each do |index, cell|
-      cell.instance_variable_set(:@color, orig.cells[index].color)
+    orig.cells.filled.each do |index, cell|
+      game.cells[index].instance_variable_set(:@color, cell.color)
     end
     game.turn = orig.turn
 

@@ -21,14 +21,6 @@ class Cells < Hash
     self.select { |i, cell| cell.y == y }
   end
 
-  def white
-    select {|index, cell| cell.white? }
-  end
-
-  def black
-    select {|index, cell| cell.black? }
-  end
-
   def empties
     select {|key, cell| !cell.filled? }
   end
@@ -42,5 +34,21 @@ class Cells < Hash
 
   def self.index(x, y)
     x.to_s + '_' + y.to_s
+  end
+
+  def self.after_load
+    # Cell クラスで xxx? で定義されていて引数を持たないメソッドを、
+    # Cells クラスの select 条件メソッドとして定義する
+    # (cell.white? が定義されていれば、 cells.white としてハッシュを返す)
+    Cell.instance_methods(false)
+    .select {|m| Cell.instance_method(m).parameters.empty? && m =~ /(.*)\?$/ }
+    .each do |method|
+      name = method.to_s.gsub(/\?$/, '')
+      self.class_eval do
+        define_method "#{name}" do
+          select {|index, cell| cell.send(method) }
+        end
+      end
+    end
   end
 end
