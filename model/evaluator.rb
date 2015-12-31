@@ -1,11 +1,11 @@
 class Evaluator
-  def initialize(board_id)
-    @board_id = board_id
+  def initialize(game_id)
+    @game_id = game_id
     @default = 'move'
   end
 
   def evaluate(strategy = nil)
-    strategy(strategy).evaluate(Board.instance(@board_id))
+    strategy(strategy).evaluate(Game.instance(@game_id))
   end
 
   def strategy(strategy = nil)

@@ -1,9 +1,9 @@
 class Cells < Hash
-  def initialize(board_id)
-    @board_id = board_id
+  def initialize(game_id)
+    @game_id = game_id
     (1..8).each do |x|
       (1..8).each do |y|
-        self[Cells.index(x, y)] = Cell.new(x, y, board_id)
+        self[Cells.index(x, y)] = Cell.new(x, y, game_id)
       end
     end
   end

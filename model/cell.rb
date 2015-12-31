@@ -1,12 +1,12 @@
 class Cell
   attr_reader :x, :y, :index
 
-  def initialize(x, y, board_id)
+  def initialize(x, y, game_id)
     @x = x
     @y = y
     @index = Cells.index(x, y)
     @color = nil
-    @board_id = board_id
+    @game_id = game_id
   end
 
   def set(color)
@@ -44,11 +44,11 @@ class Cell
   end
 
   def next_cell(vector)
-    board.cells[next_cell_index(vector)]
+    game.cells[next_cell_index(vector)]
   end
 
-  def board
-    Board.instance(@board_id)
+  def game
+    Game.instance(@game_id)
   end
 
   def color

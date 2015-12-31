@@ -1,22 +1,22 @@
 module Strategy
   class MinMax < AbstractStrategy
-    def evaluate(board)
+    def evaluate(game)
       @search_level = 3
-      min_max(board, @search_level)
+      min_max(game, @search_level)
     end
 
-    def min_max(board, depth)
-      return score(board) if depth == 0 || board.ended? || board.moves.empty?
+    def min_max(game, depth)
+      return score(game) if depth == 0 || game.ended? || game.moves.empty?
 
-      value = board.turn == :white ? -99999 : 99999
+      value = game.turn == :white ? -99999 : 99999
       best_index = nil
 
-      board.moves.each do |index, move|
-        move.simulate do |next_board|
+      game.moves.each do |index, move|
+        move.simulate do |next_game|
           # 次の盤面の評価点
-          child_value = min_max(next_board, depth - 1)
+          child_value = min_max(next_game, depth - 1)
 
-          condition = board.turn == :white ? (value < child_value) : (value > child_value)
+          condition = game.turn == :white ? (value < child_value) : (value > child_value)
           if condition
             value = child_value
             best_index = index
@@ -29,9 +29,9 @@ module Strategy
       return depth == @search_level ? best_index : value
     end
 
-    def score(board)
-      point = evaluate_cells(board.cells.white.map{|k,v|v})
-      point += 500 if board.win? :white
+    def score(game)
+      point = evaluate_cells(game.cells.white.map{|k,v|v})
+      point += 500 if game.win? :white
       point
     end
   end

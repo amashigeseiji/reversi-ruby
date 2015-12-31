@@ -1,10 +1,10 @@
 class Move
   attr_reader :cell
 
-  def initialize(index, turn, board_id)
+  def initialize(index, turn, game_id)
     @turn = turn
-    @board_id = board_id
-    @cell = board.cells[index]
+    @game_id = game_id
+    @cell = game.cells[index]
   end
 
   def execute
@@ -12,13 +12,13 @@ class Move
     reversibles.each do |cell|
       cell.reverse
     end
-    board.next_turn
+    game.next_turn
   end
 
   def simulate(&block)
-    Simulator.simulate(@board_id) do |board|
-      board.moves[@cell.index].execute
-      yield board
+    Simulator.simulate(@game_id) do |game|
+      game.moves[@cell.index].execute
+      yield game
     end
   end
 
@@ -75,7 +75,7 @@ class Move
     cells
   end
 
-  def board
-    Board.instance(@board_id)
+  def game
+    Game.instance(@game_id)
   end
 end

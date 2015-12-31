@@ -1,5 +1,5 @@
-class Board
-  @@boards = {}
+class Game
+  @@games = {}
   attr_reader :id
 
   def initialize(id = nil)
@@ -7,7 +7,7 @@ class Board
     @id = @data.id
     add_accessors [:cells, :turn]
     setup unless @data.exist?
-    @@boards[@id] = self
+    @@games[@id] = self
   end
 
   def setup
@@ -41,14 +41,14 @@ class Board
     cells.send(player).length > cells.send(player == :white ? :black : :white).length if ended?
   end
 
-  def self.instance(board_id)
-    @@boards[board_id] ||= Board.new(board_id)
+  def self.instance(game_id)
+    @@games[game_id] ||= Game.new(game_id)
   end
 
-  def self.delete(board_id)
-    if @@boards.has_key? board_id
-      @@boards.delete(board_id)
-      Resource.delete(board_id)
+  def self.delete(game_id)
+    if @@games.has_key? game_id
+      @@games.delete(game_id)
+      Resource.delete(game_id)
     end
   end
 
