@@ -2,8 +2,10 @@ class Entity
   @@after_load = []
   attr_reader :id
 
-  def initialize(id = nil)
-    @data = Resource.find(id)
+  def initialize(id = nil, sandbox = false)
+    raise 'Entity class can not instanciate directoly.' if self.class == Entity
+    dir = sandbox ? model_name + '/sandbox' : model_name
+    @data = Resource.new(id, dir)
     @id = @data.id
     @@entities[model_name][@id] = self
     after_initialize
@@ -16,6 +18,10 @@ class Entity
     self.class.to_s
   end
 
+  def destroy
+    @data.destroy
+  end
+
   def self.model_name
     self.to_s
   end
@@ -24,11 +30,11 @@ class Entity
     @@entities[model_name][id] ||= self.new(id)
   end
 
-  def self.delete(id)
+  def self.destroy(id)
     # ここで呼ばれる model_name は self.model_name のほう
     if @@entities[model_name].has_key? id
+      @@entities[model_name][id].destroy
       @@entities[model_name].delete(id)
-      Resource.delete(id)
     end
   end
 
