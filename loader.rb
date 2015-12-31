@@ -5,8 +5,12 @@ load_dir = ->(dir) {
   end
 }
 
-%w(lib model controller).each do |dir|
+%w(lib/extension lib model controller).each do |dir|
   load_dir.call(dir)
 end
 
 require './model/strategy/strategy'
+
+ObjectSpace.each_object(Class) do |k|
+  k.after_load if k.respond_to?(:after_load)
+end
