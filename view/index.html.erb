@@ -23,8 +23,8 @@
       <tbody>
         <% (1..8).each do |y| %>
           <tr>
-            <% @board.cells.row(y).each_value do |cell| %>
-              <td class="cell<%= ' movable' if @board.moves.has_key? cell.index %> cell_<%= cell.index %>" id="cell_<%= cell.index %>" data-index="<%= cell.index %>">
+            <% @game.cells.row(y).each_value do |cell| %>
+              <td class="cell<%= ' movable' if @game.moves.has_key? cell.index %> cell_<%= cell.index %>" id="cell_<%= cell.index %>" data-index="<%= cell.index %>">
                 <span class="disc <%= cell.color.send(:to_s) %>"></span>
               </td>
             <% end %>
@@ -35,7 +35,7 @@
 
     <div class="operator">
       <div class="clearfix">
-        <p class="pull-left">ターン: <strong class="current_turn"><%= @board.turn %></strong></p>
+        <p class="pull-left">ターン: <strong class="current_turn"><%= @game.turn %></strong></p>
         <div class="pull-right">
           <button class="btn btn-danger btn-alert reset">リセット</button>
         </div>

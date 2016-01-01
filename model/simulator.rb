@@ -1,35 +1,30 @@
 class Simulator
-  def initialize(board_id)
-    @orig_board_id = board_id
-    @clone_id = 'sandbox/' + Resource.random
+  def initialize(game_id)
+    @orig_game_id = game_id
+    @clone_id = Resource.random
   end
 
   def create_sandbox(&block)
-    Dir::mkdir './data/sandbox/' unless Dir::exist? './data/sandbox'
-    resource = Resource.new(@clone_id)
-    resource.cells = nil
-    resource.turn = orig.turn
-    resource.write
-
-    board = Board.new(@clone_id)
-    board.cells = Cells.new(@clone_id)
-    board.cells.each do |index, cell|
-     cell.instance_variable_set(:@color, orig.cells[index].color)
+    game = Game.new(@clone_id, true)
+    game.cells = Cells.new(@clone_id)
+    orig.cells.filled.each do |index, cell|
+      game.cells[index].instance_variable_set(:@color, cell.color)
     end
+    game.turn = orig.turn
 
-    yield board
+    yield game
   end
 
   def destroy
-    Board.delete(@clone_id)
+    Game.destroy(@clone_id)
   end
 
   # sandbox 環境内で与えられたブロックを評価する
-  def self.simulate(board_id, &block)
-    simulator = Simulator.new(board_id)
+  def self.simulate(game_id, &block)
+    simulator = Simulator.new(game_id)
     begin
-      simulator.create_sandbox do |board|
-        yield board
+      simulator.create_sandbox do |game|
+        yield game
       end
     rescue StandardError => e
       raise SimulatorError.new('Simulator Error: ' + e.message)
@@ -41,6 +36,6 @@ class Simulator
   private
 
   def orig
-    Board.instance(@orig_board_id)
+    Game.instance(@orig_game_id)
   end
 end

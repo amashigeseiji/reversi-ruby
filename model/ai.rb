@@ -1,20 +1,25 @@
 class AI
-  def initialize(board_id)
-    @board_id = board_id
+  def initialize(game_id)
+    @game_id = game_id
   end
 
   def choice
-    return nil if board.moves.empty?
-    # ruby 2.1以上
-    board.moves
-      .map {|index, move| [index, Evaluator.new(move).evaluate]}
-      .to_h
-      .max_by { |_, item| item }[0]
+    return nil if game.moves.pass?
+    return game.moves.first[0] if game.moves.length == 1
+    strategy.choice(game)
+  end
+
+  def strategy(strategy = 'alpha_beta')
+    #strategy = game.cells.empties.length <= 20 ? 'alpha_beta' : 'move'
+    if !@strategy || @strategy.class.to_s.underscore != strategy
+      @strategy = Strategy.factory(strategy)
+    end
+    @strategy
   end
 
   private
 
-  def board
-    Board.instance(@board_id)
+  def game
+    Game.instance(@game_id)
   end
 end

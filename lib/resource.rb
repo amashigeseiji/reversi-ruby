@@ -3,9 +3,10 @@ require 'securerandom'
 class Resource
   attr_reader :id
 
-  def initialize(id = nil)
+  def initialize(id = nil, dir = nil)
     @id = id || Resource.random
     @data = {}
+    @dir = dir ? dir + '/' : nil
     read
   end
 
@@ -41,27 +42,24 @@ class Resource
     File.exist? filename
   end
 
-  def self.find(id)
-    File.exist?(Resource.dir + id.to_s) ? Resource.new(id) : Resource.new
+  def directory
+    datadir = './data/'
+    dir = "#{datadir}#{@dir}"
+    Dir::mkdir dir unless Dir::exist? dir
+    dir
   end
 
-  def self.delete(id)
-    File.delete(Resource.dir + id.to_s)
+  def destroy
+    File.delete(filename)
   end
 
   def self.random
     SecureRandom.urlsafe_base64
   end
 
-  def self.dir
-    datadir = './data/'
-    Dir::mkdir datadir unless Dir::exist? datadir
-    datadir
-  end
-
   private
 
   def filename
-    Resource.dir + id.to_s
+    directory + id.to_s
   end
 end

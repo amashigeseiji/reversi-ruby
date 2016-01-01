@@ -1,17 +1,17 @@
 <%=
-  cells = @board.cells.map { |index, cell| cell.to_hash }
+  cells = @game.cells.map { |index, cell| cell.to_hash }
   moves = {}
-  @board.moves.map do |index, move|
-    moves[index] = move.reversibles.map {|cell| cell.to_hash }
+  @game.moves.map do |index, move|
+    moves[index] = move.reversibles.map {|cell| cell.to_hash } if move.is_a? Move
   end
 
   {
     message: @error,
     moves:   moves,
     cells:   cells,
-    turn:    @board.turn,
-    ended:   @board.ended?,
-    white:   @board.cells.white.length,
-    black:   @board.cells.black.length
+    turn:    @game.turn,
+    ended:   @game.ended?,
+    white:   @game.cells.white.length,
+    black:   @game.cells.black.length
   }.to_json
 %>

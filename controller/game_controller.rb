@@ -1,32 +1,32 @@
 class GameController
   def initialize(request)
     @request = request
-    set_board
+    set_game
   end
 
   def index
   end
 
   def move
-    cell = @board.cells.cell(@request[:x], @request[:y])
+    cell = @game.cells[[@request[:x], @request[:y]]]
     raise BadRequestError.new('指定されたセルが存在しません') unless cell
     raise BadRequestError.new('すでに石が置かれています') if cell.filled?
-    raise BadRequestError.new('指定されたセルに石を置けません') unless @board.moves[cell.index]
-    @board.moves[cell.index].execute
+    raise BadRequestError.new('指定されたセルに石を置けません') unless @game.moves[cell.index]
+    @game.moves[cell.index].execute
   end
 
   def reset
-    @board.reset
+    @game.reset
   end
 
   def pass
-    raise BadRequestError.new('指すことができるのでパスできません') unless @board.moves.empty?
-    @board.next_turn
+    raise BadRequestError.new('指すことができるのでパスできません') unless @game.moves.pass?
+    @game.moves.pass.execute
   end
 
   def ai
-    @ai ||= AI.new(@board.id)
-    cell = @board.cells[@ai.choice]
+    @ai ||= AI.new(@game.id)
+    cell = @game.cells[@ai.choice]
     return send :pass if cell.nil?
     @request[:x] = cell.x
     @request[:y] = cell.y
@@ -35,15 +35,15 @@ class GameController
 
   private
 
-  def set_board
-    if session['board_id']
-      @board = Board.instance(session['board_id'])
-      if @board.id != session['board_id']
-        session['board_id'] = @board.id
+  def set_game
+    if session['game_id']
+      @game = Game.instance(session['game_id'])
+      if @game.id != session['game_id']
+        session['game_id'] = @game.id
       end
     else
-      @board = Board.new
-      session['board_id'] = @board.id
+      @game = Game.new
+      session['game_id'] = @game.id
     end
   end
 
