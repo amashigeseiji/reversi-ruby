@@ -1,22 +1,22 @@
 module Strategy
   class MinMax < AbstractStrategy
-    def evaluate(game)
+    def choice(game)
       @search_level = 3
-      min_max(game, @search_level)
+      min_max(game, @search_level, true)
     end
 
-    def min_max(game, depth)
-      return score(game) if depth == 0 || game.ended?
+    def min_max(game, depth, flag)
+      return @evaluator.score(game) if depth == 0 || game.ended?
 
-      value = game.turn == :white ? -99999 : 99999
+      value = flag ? -99999 : 99999
       best_index = nil
 
       game.moves.each do |index, move|
         move.simulate do |next_game|
           # 次の盤面の評価点
-          child_value = min_max(next_game, depth - 1)
+          child_value = min_max(next_game, depth - 1, !flag)
 
-          condition = game.turn == :white ? (value < child_value) : (value > child_value)
+          condition = flag ? (value < child_value) : (value > child_value)
           if condition
             value = child_value
             best_index = index

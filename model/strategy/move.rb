@@ -1,6 +1,6 @@
 module Strategy
   class Move < AbstractStrategy
-    def evaluate(game)
+    def choice(game)
        game.moves
          .map {|index, move| [index, evaluate_move(move)]}
          .to_h
@@ -11,7 +11,7 @@ module Strategy
       evaluated = 0
 
       # 自分の指し手でひっくり返せるセルの合計点を加算
-      evaluated += score move
+      evaluated += @evaluator.move_score move
 
       move.simulate do |game|
         included = false
@@ -20,13 +20,13 @@ module Strategy
         # 対戦相手の指し手
         game.moves.each do |index, next_move|
           # 相手の指し手の合計点を減算（相手の指し手の合計点が低いほうがよい）
-          evaluated -= score next_move
+          evaluated -= @evaluator.move_score next_move
           # AIが指した手が対戦相手にとられるかどうか
-          included = next_move.reversibles.map {|cell| cell.index}.include?(move.index) unless included
+          included = next_move.reversibles.map {|cell| cell.index}.include?(move.index) if !included && move.is_a?(Move)
           # 次番のAIの指し手
           next_move.simulate do |next_game|
             # 次の自分の盤の指し手で角が取れるかどうか(すべて true なら確実に角が取れる手)
-            corner << next_game.moves.keys.any? {|i| i.match(/(1_1|1_8|8_1|8_8)/)}
+            corner << next_game.cells.corner.keys.any? {|i| next_game.moves.keys.include?(i)}
           end
 
         end
@@ -38,13 +38,6 @@ module Strategy
       end
 
       evaluated
-    end
-
-    def score(move)
-      point = 0
-      point += point(move.cell) if move.cell.corner?
-      point += evaluate_cells(move.reversibles.map {|i| i }.push(move.cell))
-      point
     end
   end
 end
