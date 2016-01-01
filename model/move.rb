@@ -7,18 +7,32 @@ class Move
     @cell = game.cells[index]
   end
 
-  def execute
+  # @params [bool] save 状態を保存するかどうか
+  def execute(save = true)
     @cell.set(@turn)
     reversibles.each do |cell|
       cell.reverse
     end
-    game.next_turn
+    game.next_turn save
+  end
+
+  # @params [bool] save 状態を保存するかどうか
+  def undo(save = true)
+    @cell.instance_variable_set(:@color, nil)
+    reversibles.each do |cell|
+      cell.reverse
+    end
+    game.next_turn save
   end
 
   def simulate(&block)
-    Simulator.simulate(@game_id) do |game|
-      game.moves[@cell.index].execute
+    begin
+      execute false
       yield game
+    rescue StandardError => e
+      raise SimulatorError.new('Simulator Error: ' + e.message)
+    ensure
+      undo false
     end
   end
 

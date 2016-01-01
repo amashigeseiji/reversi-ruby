@@ -26,9 +26,9 @@ class Game < Entity
     moves.empty? && moves.opponent.empty?
   end
 
-  def next_turn
+  def next_turn(commit = true)
     @data[:turn] = opponent
-    save
+    save if commit
     @moves = Moves.new(@id)
   end
 
