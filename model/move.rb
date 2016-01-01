@@ -1,4 +1,5 @@
 class Move
+  include Simulatable
   attr_reader :cell
 
   def initialize(index, turn, game_id)
@@ -23,17 +24,6 @@ class Move
       cell.reverse
     end
     game.next_turn save
-  end
-
-  def simulate(&block)
-    begin
-      execute false
-      yield game
-    rescue StandardError => e
-      raise SimulatorError.new('Simulator Error: ' + e.message)
-    ensure
-      undo false
-    end
   end
 
   def executable?
@@ -87,9 +77,5 @@ class Move
       end
     end
     cells
-  end
-
-  def game
-    Game.instance(@game_id)
   end
 end

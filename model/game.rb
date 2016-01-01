@@ -23,7 +23,7 @@ class Game < Entity
 
   def ended?
     return true if @data.cells.empties.empty?
-    moves.empty? && moves.opponent.empty?
+    moves.pass? && moves.opponent.pass?
   end
 
   def next_turn(commit = true)

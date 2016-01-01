@@ -5,7 +5,7 @@ load_dir = ->(dir) {
   end
 }
 
-%w(lib/extension lib model controller).each do |dir|
+%w(lib/extension lib model/module model controller).each do |dir|
   load_dir.call(dir)
 end
 

@@ -5,7 +5,7 @@ class AI
   end
 
   def choice
-    return nil if game.moves.empty?
+    return nil if game.moves.pass?
     return game.moves.first[0] if game.moves.length == 1
     @evaluator.evaluate(strategy)
   end

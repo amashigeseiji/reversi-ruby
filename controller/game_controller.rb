@@ -20,8 +20,8 @@ class GameController
   end
 
   def pass
-    raise BadRequestError.new('指すことができるのでパスできません') unless @game.moves.empty?
-    @game.next_turn
+    raise BadRequestError.new('指すことができるのでパスできません') unless @game.moves.pass?
+    @game.moves.pass.execute
   end
 
   def ai

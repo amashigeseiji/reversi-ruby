@@ -6,7 +6,7 @@ module Strategy
     end
 
     def alpha_beta(game, depth, flag, alpha, beta)
-      return score(game) if depth == 0 || game.ended? || game.moves.empty?
+      return score(game) if depth == 0 || game.ended?
 
       value = 0
       best_index = nil

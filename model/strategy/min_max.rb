@@ -6,7 +6,7 @@ module Strategy
     end
 
     def min_max(game, depth)
-      return score(game) if depth == 0 || game.ended? || game.moves.empty?
+      return score(game) if depth == 0 || game.ended?
 
       value = game.turn == :white ? -99999 : 99999
       best_index = nil
