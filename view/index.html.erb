@@ -21,8 +21,16 @@
 
     <table id="board_table">
       <tbody>
+        <tr>
+          <% (-1..7).each do |i| %>
+            <td class="cell_index_x">
+              <% if i >= 0 %><%= ('A'..'Z').to_a[i] %><% end %>
+            </td>
+          <% end %>
+        </tr>
         <% (1..8).each do |y| %>
           <tr>
+            <td class="cell_index_y"><%= "#{y}" %></td>
             <% @game.cells.row(y).each_value do |cell| %>
               <td class="cell<%= ' movable' if @game.moves.has_key? cell.index %> cell_<%= cell.index %>" id="cell_<%= cell.index %>" data-index="<%= cell.index %>">
                 <span class="disc <%= cell.color.send(:to_s) %>"></span>

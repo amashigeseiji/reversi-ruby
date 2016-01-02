@@ -66,3 +66,11 @@ td.cell:hover, td.cell.movable.hover {
 td.cell.movable:hover, td.cell.movable.hover {
   background-color: rgba(200, 250, 200, 0.9);
 }
+td.cell_index_y {
+  padding-right: 3px;
+  text-align: center;
+}
+td.cell_index_x {
+  padding-bottom: 3px;
+  text-align: center;
+}

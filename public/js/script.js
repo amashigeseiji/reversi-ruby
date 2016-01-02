@@ -79,8 +79,8 @@ $(document).ready(function(){
     }
 
     Move.prototype.move = function(selector) {
-        var index = $(selector).data('index').split('_')
-        this.execute('move', {x: index[0], y: index[1]})
+        var index = $(selector).data('index')
+        this.execute('move', {index: index})
     }
 
     Move.prototype.pass = function() {

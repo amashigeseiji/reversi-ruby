@@ -33,7 +33,7 @@ class Cells < Hash
   end
 
   def self.index(x, y)
-    x.to_s + '_' + y.to_s
+    ('A'..'Z').to_a[x - 1] + y.to_s
   end
 
   def self.after_load
