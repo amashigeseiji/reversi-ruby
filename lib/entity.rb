@@ -3,7 +3,7 @@ class Entity
   attr_reader :id
 
   def initialize(id = nil, sandbox = false)
-    raise 'Entity class can not instanciate directoly.' if self.class == Entity
+    raise 'Entity class can not instanciate directly.' if self.class == Entity
     dir = sandbox ? model_name + '/sandbox' : model_name
     @data = Resource.new(id, dir)
     @id = @data.id

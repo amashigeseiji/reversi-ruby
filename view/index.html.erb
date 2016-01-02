@@ -32,7 +32,7 @@
           <tr>
             <td class="cell_index_y"><%= "#{y}" %></td>
             <% @game.cells.row(y).each_value do |cell| %>
-              <td class="cell<%= ' movable' if @game.moves.has_key? cell.index %> cell_<%= cell.index %>" id="cell_<%= cell.index %>" data-index="<%= cell.index %>">
+              <td class="cell cell_<%= cell.index %>" id="cell_<%= cell.index %>" data-index="<%= cell.index %>">
                 <span class="disc <%= cell.color.send(:to_s) %>"></span>
               </td>
             <% end %>
