@@ -1,8 +1,18 @@
 $(document).ready(function(){
 
+    function isSmartPhone() {
+        if (navigator.userAgent.indexOf('iPhone') > 0 ||
+            navigator.userAgent.indexOf('iPad') > 0 ||
+            navigator.userAgent.indexOf('iPod') > 0 ||
+            navigator.userAgent.indexOf('Android') > 0) {
+            return true
+        }
+    }
+
     function Move() {
         this.view = new View
         this.data = {}
+        this.isSmartPhone = isSmartPhone()
         this.execute('index')
         this.bind('.reset', 'click', 'reset')
     }
@@ -31,13 +41,13 @@ $(document).ready(function(){
      * @return void
      */
     Move.prototype.execute = function(url, data, context) {
+        (context||this).release()
         return $.ajax({
             url: url,
             data: data,
             context: context || this
         })
         .done(function(data) {
-            this.release()
             this.data = data
             this.view.update(data)
             if (!data.ended && data.turn == 'white') {
@@ -64,7 +74,9 @@ $(document).ready(function(){
      */
     Move.prototype.listen = function() {
         this.bind('.cell.movable, .move', 'click', 'move')
-        this.bind('.cell.movable, .move', 'mouseenter mouseleave', 'toggle')
+        var e = this.isSmartPhone ? ['touchstart', 'touchend'] : ['mouseenter', 'mouseleave']
+        this.bind('.cell.movable, .move', e[0], 'onMouseEnter')
+        this.bind('.cell.movable, .move', e[1], 'onMouseLeave')
         this.bind('.pass', 'click', 'pass')
     }
 
@@ -91,12 +103,21 @@ $(document).ready(function(){
         this.execute('reset')
     }
 
-    Move.prototype.toggle = function(selector) {
+    Move.prototype.onMouseEnter = function(selector) {
         var index = $(selector).data('index')
-        $('.cell_' + index).toggleClass('hover')
+        $('.cell_' + index).addClass('hover')
 
         $.each (this.data.moves[index], function(key, cell) {
-            $('#cell_' + cell.index + ' > span.disc').toggleClass('reversible')
+            $('#cell_' + cell.index + ' > span.disc').addClass('reversible')
+        })
+    }
+
+    Move.prototype.onMouseLeave = function(selector) {
+        var index = $(selector).data('index')
+        $('.cell_' + index).removeClass('hover')
+
+        $.each (this.data.moves[index], function(key, cell) {
+            $('#cell_' + cell.index + ' > span.disc').removeClass('reversible')
         })
     }
 

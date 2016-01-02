@@ -54,14 +54,8 @@
 
   </div>
 
-  <footer class="container-fluid">
-    <% if @request.dev? %>
-    <ul>
-      <% @request.inspect.split(', "').each do |val| %>
-        <li><%= val.inspect %></li>
-      <% end %>
-    </ul>
-    <% end %>
+  <footer class="footer">
+    <p class="container text-muted text-center">This program is managed on <a href="https://github.com/amashigeseiji/reversi" target="_blank">Github</a>.<br><a href="https://github.com/amashigeseiji/reversi/issues" target="_blank">Bug report</a></p>
   </footer>
 
 </body>
