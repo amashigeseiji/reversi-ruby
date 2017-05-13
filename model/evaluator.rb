@@ -19,20 +19,20 @@ class Evaluator
   def point(cell)
     if cell.corner?
       50
+    elsif cell.next_corner?
+      if ['A2', 'B1', 'B2'].include? cell.index
+        corner = 'A1'
+      elsif ['A7', 'B7', 'B8'].include? cell.index
+        corner = 'A8'
+      elsif ['G1', 'G2', 'H2'].include? cell.index
+        corner = 'H1'
+      else
+        corner = 'H8'
+      end
+      return cell.game.cells[corner].filled? ? 1 : -40
     elsif cell.wall?
       5
     else
-      corner_empty = cell.game.cells.corner.select {|index, c| !c.filled? }
-      corner_empty.each do |index, corner|
-        delta_x = corner.x - cell.x
-        delta_y = corner.y - cell.y
-        if delta_x == 1 && delta_y == 1 ||
-          delta_x == -1 && delta_y == -1 ||
-          delta_x == -1 && delta_y == 1
-          delta_x == 1 && delta_y == -1
-          return -40
-        end
-      end
       1
     end
   end

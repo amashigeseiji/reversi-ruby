@@ -64,11 +64,15 @@ class Cell
   end
 
   def corner?
-    (@x == 1 && (@y == 1 || @y == 8)) || (@x == 8 && (@y == 1 || @y == 8))
+    ['A1', 'A8', 'H1', 'H8'].include? @index
   end
 
   def wall?
     @x == 1 || @x == 8 || @y == 1 || @y == 8
+  end
+
+  def next_corner?
+    ['A2', 'A7', 'B1', 'B2', 'B7', 'B8', 'G1', 'G2', 'G7', 'G8', 'H2', 'H7'].include? @index
   end
 
   private
